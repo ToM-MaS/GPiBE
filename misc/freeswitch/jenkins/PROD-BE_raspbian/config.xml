@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <displayName>Raspian Build Environment</displayName>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.ChoiceParameterDefinition>
+          <name>REINSTALL</name>
+          <description></description>
+          <choices class="java.util.Arrays$ArrayList">
+            <a class="string-array">
+              <string>no</string>
+              <string>yes</string>
+            </a>
+          </choices>
+        </hudson.model.ChoiceParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers class="vector"/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash -x
+
+http_proxy=http://localhost:3128/
+DIST=&quot;raspbian&quot;
+ARCH=&quot;armhf&quot;
+CHROOT_DIR=&quot;./chroot-${DIST}-${ARCH}&quot;
+
+KEYSTATUS=&quot;`apt-key list | grep 90FDDD2E`&quot;
+[ x&quot;${KEYSTATUS}&quot; == x&quot;&quot; ] &amp;&amp; wget http://mirrordirector.raspbian.org/raspbian.public.key -O - | sudo apt-key add -
+
+if [[ &quot;${REINSTALL}&quot; == &quot;yes&quot; ]]; then
+ sudo apt-get -y --force-yes install binfmt-support qemu qemu-user-static debootstrap
+
+ # force umount
+ [[ &quot;x`cat /proc/mounts | grep ${CHROOT_DIR}/dev/pts`&quot; != &quot;x&quot; ]] &amp;&amp; sudo umount ${CHROOT_DIR}/dev/pts
+ [[ &quot;x`cat /proc/mounts | grep ${CHROOT_DIR}/sys`&quot; != &quot;x&quot; ]] &amp;&amp; sudo umount ${CHROOT_DIR}/sys
+ [[ &quot;x`cat /proc/mounts | grep ${CHROOT_DIR}/proc`&quot; != &quot;x&quot; ]] &amp;&amp; sudo umount ${CHROOT_DIR}/proc
+
+ sudo rm -rf &quot;${CHROOT_DIR}&quot;
+fi
+
+# Install Build Environment
+#
+if [ ! -d &quot;${CHROOT_DIR}&quot; ]; then
+ sudo http_proxy=$http_proxy qemu-debootstrap --keyring=/etc/apt/trusted.gpg --arch armhf wheezy ${CHROOT_DIR} http://mirrordirector.raspbian.org/raspbian
+ echo &quot;deb http://mirrordirector.raspbian.org/raspbian wheezy main&quot; &gt; sources.list
+ sudo cp -f sources.list &quot;${CHROOT_DIR}/etc/apt/sources.list&quot;
+ rm -f sources.list
+
+ if [ &quot;${http_proxy}&quot; != &quot;&quot; ]; then
+  echo &quot;export http_proxy=$http_proxy&quot; &gt; environment
+  sudo cp -f environment &quot;${CHROOT_DIR}/etc/environment&quot;
+  rm environment
+ fi
+
+ # mount
+ [[ &quot;x`cat /proc/mounts | grep ${CHROOT_DIR}/dev/pts`&quot; == &quot;x&quot; ]] &amp;&amp; sudo mount -o bind /dev/pts &quot;${CHROOT_DIR}/dev/pts&quot;
+ [[ &quot;x`cat /proc/mounts | grep ${CHROOT_DIR}/sys`&quot; == &quot;x&quot; ]] &amp;&amp; sudo mount -o bind /sys &quot;${CHROOT_DIR}/sys&quot;
+ [[ &quot;x`cat /proc/mounts | grep ${CHROOT_DIR}/proc`&quot; == &quot;x&quot; ]] &amp;&amp; sudo mount -o bind /proc &quot;${CHROOT_DIR}/proc&quot;
+
+ wget http://archive.raspbian.org/raspbian.public.key -O - | sudo LC_ALL=C chroot &quot;${CHROOT_DIR}&quot; apt-key add -
+ sudo LC_ALL=C http_proxy=$http_proxy chroot &quot;${CHROOT_DIR}&quot; apt-get update
+ sudo LC_ALL=C http_proxy=$http_proxy chroot &quot;${CHROOT_DIR}&quot; apt-get -y --force-yes install build-essential dpkg-dev git-core cowbuilder git-buildpackage automake autoconf libtool pkg-config libssl-dev unixodbc-dev libpq-dev libncurses5-dev libjpeg62-dev python-dev erlang-dev doxygen uuid-dev libexpat1-dev libgdbm-dev libdb-dev bison ladspa-sdk libogg-dev libasound2-dev libx11-dev libsnmp-dev libflac-dev libvorbis-dev libvlc-dev default-jdk gcj-jdk libperl-dev libyaml-dev
+
+ # umount
+ [[ &quot;x`cat /proc/mounts | grep ${CHROOT_DIR}/dev/pts`&quot; != &quot;x&quot; ]] &amp;&amp; sudo umount ${CHROOT_DIR}/dev/pts
+ [[ &quot;x`cat /proc/mounts | grep ${CHROOT_DIR}/sys`&quot; != &quot;x&quot; ]] &amp;&amp; sudo umount ${CHROOT_DIR}/sys
+ [[ &quot;x`cat /proc/mounts | grep ${CHROOT_DIR}/proc`&quot; != &quot;x&quot; ]] &amp;&amp; sudo umount ${CHROOT_DIR}/proc
+
+# Update Build Environement
+#
+else
+
+ # mount
+ [[ &quot;x`cat /proc/mounts | grep ${CHROOT_DIR}/dev/pts`&quot; == &quot;x&quot; ]] &amp;&amp; sudo mount -o bind /dev/pts &quot;${CHROOT_DIR}/dev/pts&quot;
+ [[ &quot;x`cat /proc/mounts | grep ${CHROOT_DIR}/sys`&quot; == &quot;x&quot; ]] &amp;&amp; sudo mount -o bind /sys &quot;${CHROOT_DIR}/sys&quot;
+ [[ &quot;x`cat /proc/mounts | grep ${CHROOT_DIR}/proc`&quot; == &quot;x&quot; ]] &amp;&amp; sudo mount -o bind /proc &quot;${CHROOT_DIR}/proc&quot;
+
+ sudo LC_ALL=C http_proxy=$http_proxy chroot chroot-raspbian-armhf apt-get update
+ sudo LC_ALL=C http_proxy=$http_proxy chroot chroot-raspbian-armhf apt-get -y --force-yes upgrade
+
+ # umount
+ [[ &quot;x`cat /proc/mounts | grep ${CHROOT_DIR}/dev/pts`&quot; != &quot;x&quot; ]] &amp;&amp; sudo umount ${CHROOT_DIR}/dev/pts
+ [[ &quot;x`cat /proc/mounts | grep ${CHROOT_DIR}/sys`&quot; != &quot;x&quot; ]] &amp;&amp; sudo umount ${CHROOT_DIR}/sys
+ [[ &quot;x`cat /proc/mounts | grep ${CHROOT_DIR}/proc`&quot; != &quot;x&quot; ]] &amp;&amp; sudo umount ${CHROOT_DIR}/proc
+fi</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.BuildTrigger>
+      <childProjects>PROD-FS_raspbian</childProjects>
+      <threshold>
+        <name>UNSTABLE</name>
+        <ordinal>1</ordinal>
+        <color>YELLOW</color>
+      </threshold>
+    </hudson.tasks.BuildTrigger>
+  </publishers>
+  <buildWrappers/>
+</project>
