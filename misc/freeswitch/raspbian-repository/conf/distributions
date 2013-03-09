@@ -1,0 +1,22 @@
+Origin: repo.amooma.de
+Label: apt repository
+Suite: stable
+Codename: wheezy
+Version: 3.1
+Architectures: armhf source
+Components: main contrib non-free
+Description: AMOOMA Raspbian Stable Repository
+#Update: debian
+SignWith: yes
+
+Origin: repo.amooma.de
+Label: apt repository
+Suite: unstable
+Codename: wheezy-unstable
+Version: 3.1
+Architectures: armhf source
+Components: main contrib non-free
+Description: AMOOMA Raspbian Unstable Repository
+#Update: debian
+SignWith: yes
+

@@ -1,0 +1,177 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>FreeSWITCH Stable tree for RaspberryPi / Raspbian</description>
+  <displayName>FreeSWITCH 1.2/stable Raspbian armhf</displayName>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.security.AuthorizationMatrixProperty>
+      <permission>hudson.model.Item.Discover:anonymous</permission>
+      <permission>hudson.model.Item.Read:anonymous</permission>
+    </hudson.security.AuthorizationMatrixProperty>
+  </properties>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@1.2.0">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <name>origin</name>
+        <refspec></refspec>
+        <url>git://git.freeswitch.org/freeswitch</url>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>v1.2.stable</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <localBranch>master</localBranch>
+    <disableSubmodules>false</disableSubmodules>
+    <recursiveSubmodules>false</recursiveSubmodules>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <authorOrCommitter>false</authorOrCommitter>
+    <clean>false</clean>
+    <wipeOutWorkspace>false</wipeOutWorkspace>
+    <pruneBranches>false</pruneBranches>
+    <remotePoll>false</remotePoll>
+    <ignoreNotifyCommit>false</ignoreNotifyCommit>
+    <useShallowClone>false</useShallowClone>
+    <buildChooser class="hudson.plugins.git.util.DefaultBuildChooser"/>
+    <gitTool>Default</gitTool>
+    <submoduleCfg class="list"/>
+    <relativeTargetDir>freeswitch</relativeTargetDir>
+    <reference></reference>
+    <excludedRegions></excludedRegions>
+    <excludedUsers></excludedUsers>
+    <gitConfigName></gitConfigName>
+    <gitConfigEmail></gitConfigEmail>
+    <skipTag>true</skipTag>
+    <includedRegions></includedRegions>
+    <scmName></scmName>
+  </scm>
+  <quietPeriod>120</quietPeriod>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers class="vector"/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>#!/bin/bash -ex
+#
+
+# settings
+#
+distro=wheezy
+arch=armhf
+suite=stable
+export http_proxy=http://localhost:3128/
+
+BE_ROOT=&quot;/var/lib/jenkins/jobs/PROD-BE_raspbian/workspace/chroot-raspbian-armhf&quot;
+BUILD_DIR=&quot;${BE_ROOT}/mnt&quot;
+
+rm -f *.tar.gz *.tar.xz *.dsc *.build *.changes *.deb
+
+[ ! -L /dev/fd ] &amp;&amp; sudo ln -s /proc/self/fd /dev/fd
+if [ ! -d ./freeswitch ]; then
+ git clone -b v1.2.stable git://git.freeswitch.org/freeswitch freeswitch
+ (cd freeswitch; git branch master; git branch -D v1.2.stable)
+fi
+
+
+cd freeswitch
+
+ver=&quot;$(cat build/next-release.txt | sed -e &apos;s/-/~/g&apos;)~n$(date +%Y%m%dT%H%M%SZ)-1~${distro}+1&quot;
+git clean -fdx &amp;&amp; git reset --hard HEAD
+
+echo &quot;# Do not generate diff for changes in configure.in
+extend-diff-ignore = \&quot;configure.in$\&quot;&quot; &gt; debian/source/options
+./build/set-fs-version.sh &quot;$ver&quot;
+[ -f ../modules_raspbian.conf ] &amp;&amp; cp -L ../modules_raspbian.conf debian/modules.conf
+(cd debian &amp;&amp; ./bootstrap.sh -c $distro)
+git add configure.in &amp;&amp; git commit -m &quot;bump to custom v$ver&quot;
+dch -b -m -v &quot;$ver&quot; --force-distribution -D &quot;$suite&quot; &quot;Custom build.&quot;
+
+cd -
+
+
+echo &quot;export http_proxy=&quot;$http_proxy&quot;; cd /mnt/freeswitch; dpkg-buildpackage -b -us -uc -Zxz -z9; chmod 777 /mnt; chmod o+w ../*&quot; &gt; build.sh
+
+# mount
+[[ &quot;x`cat /proc/mounts | grep ${BE_ROOT}/dev/pts`&quot; == &quot;x&quot; ]] &amp;&amp; sudo mount -o bind /dev/pts &quot;${BE_ROOT}/dev/pts&quot;
+[[ &quot;x`cat /proc/mounts | grep ${BE_ROOT}/sys`&quot; == &quot;x&quot; ]] &amp;&amp; sudo mount -o bind /sys &quot;${BE_ROOT}/sys&quot;
+[[ &quot;x`cat /proc/mounts | grep ${BE_ROOT}/proc`&quot; == &quot;x&quot; ]] &amp;&amp; sudo mount -o bind /proc &quot;${BE_ROOT}/proc&quot;
+[[ &quot;x`cat /proc/mounts | grep ${BUILD_DIR}`&quot; == &quot;x&quot; ]] &amp;&amp; sudo mount -o bind . &quot;${BUILD_DIR}&quot;
+
+sudo LC_ALL=C chroot &quot;${BE_ROOT}&quot; bash -x /mnt/build.sh &amp;&amp; rm -f build.sh
+
+# umount
+[[ &quot;x`cat /proc/mounts | grep ${BE_ROOT}/dev/pts`&quot; != &quot;x&quot; ]] &amp;&amp; sudo umount ${BE_ROOT}/dev/pts
+[[ &quot;x`cat /proc/mounts | grep ${BE_ROOT}/sys`&quot; != &quot;x&quot; ]] &amp;&amp; sudo umount ${BE_ROOT}/sys
+[[ &quot;x`cat /proc/mounts | grep ${BE_ROOT}/proc`&quot; != &quot;x&quot; ]] &amp;&amp; sudo umount ${BE_ROOT}/proc
+[[ &quot;x`cat /proc/mounts | grep ${BUILD_DIR}`&quot; != &quot;x&quot; ]] &amp;&amp; sudo umount &quot;${BUILD_DIR}&quot;
+git reset --hard HEAD^
+</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>*.deb</artifacts>
+      <latestOnly>false</latestOnly>
+    </hudson.tasks.ArtifactArchiver>
+    <jenkins.plugins.publish__over__ssh.BapSshPublisherPlugin plugin="publish-over-ssh@1.10">
+      <consolePrefix>SSH: </consolePrefix>
+      <delegate>
+        <publishers>
+          <jenkins.plugins.publish__over__ssh.BapSshPublisher>
+            <configName>AMOOMA Raspbian Repository</configName>
+            <verbose>true</verbose>
+            <transfers>
+              <jenkins.plugins.publish__over__ssh.BapSshTransfer>
+                <remoteDirectory>build/${BUILD_TAG}</remoteDirectory>
+                <sourceFiles>*.*</sourceFiles>
+                <excludes>build.sh</excludes>
+                <removePrefix></removePrefix>
+                <remoteDirectorySDF>false</remoteDirectorySDF>
+                <flatten>false</flatten>
+                <cleanRemote>false</cleanRemote>
+                <noDefaultExcludes>false</noDefaultExcludes>
+                <makeEmptyDirs>false</makeEmptyDirs>
+                <patternSeparator>[, ]+</patternSeparator>
+                <execCommand>reprepro -Vb /var/www/repo.amooma.de/raspbian include wheezy /var/www/repo.amooma.de/raspbian/build/${BUILD_TAG}/*.changes &amp;&amp; rm -rf /var/www/repo.amooma.de/raspbian/build/${BUILD_TAG}/</execCommand>
+                <execTimeout>120000</execTimeout>
+                <usePty>false</usePty>
+              </jenkins.plugins.publish__over__ssh.BapSshTransfer>
+            </transfers>
+            <useWorkspaceInPromotion>false</useWorkspaceInPromotion>
+            <usePromotionTimestamp>false</usePromotionTimestamp>
+            <retry class="jenkins.plugins.publish_over_ssh.BapSshRetry">
+              <retries>10</retries>
+              <retryDelay>10000</retryDelay>
+            </retry>
+          </jenkins.plugins.publish__over__ssh.BapSshPublisher>
+        </publishers>
+        <continueOnError>false</continueOnError>
+        <failOnError>false</failOnError>
+        <alwaysPublishFromMaster>false</alwaysPublishFromMaster>
+        <hostConfigurationAccess class="jenkins.plugins.publish_over_ssh.BapSshPublisherPlugin" reference="../.."/>
+      </delegate>
+    </jenkins.plugins.publish__over__ssh.BapSshPublisherPlugin>
+    <hudson.plugins.postbuildtask.PostbuildTask plugin="postbuild-task@1.8">
+      <tasks>
+        <hudson.plugins.postbuildtask.TaskProperties>
+          <logTexts>
+            <hudson.plugins.postbuildtask.LogProperties>
+              <logText>dpkg-genchanges:</logText>
+              <operator>AND</operator>
+            </hudson.plugins.postbuildtask.LogProperties>
+          </logTexts>
+          <EscalateStatus>false</EscalateStatus>
+          <RunIfJobSuccessful>false</RunIfJobSuccessful>
+          <script>rm -rf *.tar.gz *.tar.xz *.tar.bz2 *.dsc *.build *.changes *.deb freeswitch</script>
+        </hudson.plugins.postbuildtask.TaskProperties>
+      </tasks>
+    </hudson.plugins.postbuildtask.PostbuildTask>
+  </publishers>
+  <buildWrappers/>
+</project>
