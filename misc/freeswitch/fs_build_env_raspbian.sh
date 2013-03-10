@@ -40,7 +40,7 @@ if [ ! -d "${CHROOT_DIR}" ]; then
 
  wget http://archive.raspbian.org/raspbian.public.key -O - | sudo LC_ALL=C chroot "${CHROOT_DIR}" apt-key add -
  sudo LC_ALL=C http_proxy=$http_proxy chroot "${CHROOT_DIR}" apt-get update
- sudo LC_ALL=C http_proxy=$http_proxy chroot "${CHROOT_DIR}" apt-get -y --force-yes install build-essential dpkg-dev git-core cowbuilder git-buildpackage automake autoconf libtool pkg-config libssl-dev unixodbc-dev libpq-dev libncurses5-dev libjpeg62-dev python-dev erlang-dev doxygen uuid-dev libexpat1-dev libgdbm-dev libdb-dev bison ladspa-sdk libogg-dev libasound2-dev libx11-dev libsnmp-dev libflac-dev libvorbis-dev libvlc-dev default-jdk gcj-jdk libperl-dev libyaml-dev
+ sudo LC_ALL=C http_proxy=$http_proxy chroot "${CHROOT_DIR}" apt-get -y --force-yes install build-essential dpkg-dev git-core cowbuilder git-buildpackage automake autoconf libtool pkg-config libssl-dev unixodbc-dev libpq-dev libncurses5-dev libjpeg62-dev python-dev erlang-dev doxygen uuid-dev libexpat1-dev libgdbm-dev libdb-dev bison ladspa-sdk libogg-dev libasound2-dev libx11-dev libsnmp-dev libflac-dev libvorbis-dev libvlc-dev default-jdk gcj-jdk libperl-dev libyaml-dev libicu-dev libgnutls-dev
 
  # umount
  [[ "x`cat /proc/mounts | grep ${CHROOT_DIR}/dev/pts`" != "x" ]] && sudo umount ${CHROOT_DIR}/dev/pts
