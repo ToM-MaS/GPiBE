@@ -14,7 +14,7 @@ cd $(dirname $(readlink -f $0))
 if [ ! -d ./images ]; then
 	mkdir images
 else
-	rm images/*
+	rm -f images/*
 fi
 
 # Download Image
