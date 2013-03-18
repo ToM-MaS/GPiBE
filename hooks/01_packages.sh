@@ -2,7 +2,7 @@
 
 # Copy archives from GBE Debian Live repo
 for FILE in /be/archives/*.list.chroot; do
-	DEST_FILE="/etc/apt/sources.list.d/`basename "${FILE%%.*}"`"
+	DEST_FILE="/etc/apt/sources.list.d/`basename "${FILE%%.*}"`.list"
 	cp -f "${FILE}" "${DEST_FILE}"
 done
 find /be/archives -type f -name "*.key.chroot" -exec apt-key add {} \;
