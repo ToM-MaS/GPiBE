@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash
 
 . GPiBE.conf
 
@@ -14,8 +14,9 @@ ${MNT} "${GPI_IMAGE}" chroot
 mount -o bind ./ chroot/be
 
 echo -e "GPiBE: Running hooks ..."
-for FILE in hooks/*.sh.chroot; do
+for FILE in `find hooks -name "*.sh.chroot" | sort`; do
 	sudo chroot chroot /be/${FILE}
+	[ "$?" != "0" ] && break
 done
 
 # umount
