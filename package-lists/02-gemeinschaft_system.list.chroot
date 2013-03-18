@@ -17,12 +17,14 @@ wget inetutils-ping inetutils-telnet traceroute resolvconf bootlogd ca-certifica
 libcap2-bin libpcap-dev unzip
 
 # sysadmin tools
-sysstat htop iftop slurm iptraf iotop dstat lsof mtr-tiny tcpdump ngrep ssldump pciutils usbutils mailutils lshw hwinfo tree screen dtach tmux byobu multitail powertop
+sysstat htop iftop slurm iptraf iotop dstat lsof mtr-tiny tcpdump ngrep ssldump pciutils usbutils  lshw hwinfo tree screen dtach tmux byobu multitail powertop
 
 # services
 mysql-server-5.5 mysql-server mysql-client-5.5 mysql-client mysql-common
 openssh-server dnsmasq ntp memcached snmpd snmp snmp-mibs-downloader
-postfix
 
 # security
 shorewall shorewall6 iptables apg haveged sshguard
+
+# DISABLED as of now
+#postfix mailutils
