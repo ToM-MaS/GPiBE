@@ -17,6 +17,7 @@ apt-get clean 2>&1
 
 # load preseeds
 for FILE in /be/upstream/GBE/config.v3/preseed/*.cfg.chroot; do
+	debconf-set-selections "${FILE}"
 done
 
 # Install packages
