@@ -22,7 +22,7 @@ if [[ ! -e "${IMAGE_ARCHIVE_FILE}" && ! -e "${IMAGE_FILE}" && ! -e "${GPI_IMAGE}
 	echo -e "GPiBE: Downloading Raspbian base image ..."
 	wget "${RPI_IMAGE_SRC_URL}" -O "${IMAGE_ARCHIVE_FILE}"
 fi
-[ ! -e "${IMAGE_FILE}" ]; unzip "${IMAGE_ARCHIVE_FILE}" -d "${IMAGE_ARCHIVE_FILE%%/*}"
+[ ! -e "${IMAGE_FILE}" ] && unzip "${IMAGE_ARCHIVE_FILE}" -d "${IMAGE_ARCHIVE_FILE%%/*}"
 if [ ! -e "${GPI_IMAGE}" ]; then
 	echo -e "GPiBE: Creating working image copy ..."
 	cp -f "${IMAGE_FILE}" "${GPI_IMAGE}"
