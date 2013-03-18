@@ -13,7 +13,7 @@ echo '#!/bin/sh' > /usr/sbin/policy-rc.d
 echo 'exit 101' >> /usr/sbin/policy-rc.d
 chmod 755 /usr/sbin/policy-rc.d
 
-# Copy archives from GBE Debian Live repo
+# Copy archives
 for FILE in /be/archives/*.list.chroot; do
 	DEST_FILE="/etc/apt/sources.list.d/`basename "${FILE%%.*}"`.list"
 	cp -f "${FILE}" "${DEST_FILE}"

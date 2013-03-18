@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+# GemeinschaftPi
+# Run hook scripts from GBE
+#
+# Copyright (c) 2013, Julian Pawlowski <jp@jps-networks.eu>
+# See LICENSE.GPiBE file for details.
+#
+
+echo -e "GPiBE: Now running hook files from GBE upstream ..."
+for FILE in /be/upstream/GBE/config.v3/hooks/*.sh.chroot; do
+	${FILE}
+done
