@@ -24,7 +24,7 @@ fi
 
 # Mount
 ${MNT} "${GPI_IMAGE}" chroot
-mkdir -p chroot/be
+[ ! -d chroot/be ] && mkdir -p chroot/be
 mount -o bind ./ chroot/be
 
 # Shrink image
