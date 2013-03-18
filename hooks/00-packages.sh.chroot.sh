@@ -23,6 +23,9 @@ find /be/archives -type f -name "*.key.chroot" -exec apt-key add {} \;
 #FIXME
 echo "89.221.14.194 repo.amooma.de" >> /etc/hosts
 
+# Disable interactive frontend
+export DEBIAN_FRONTEND=noninteractive
+
 apt-get update 2>&1
 apt-get -y --force-yes upgrade 2>&1
 apt-get clean 2>&1

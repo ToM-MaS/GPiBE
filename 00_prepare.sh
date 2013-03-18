@@ -38,6 +38,7 @@ mount -o bind ./ chroot/be
 # Shrink image
 echo -e "GPiBE: Removing abundant packages to shrink image ..."
 export LC_ALL=C
+export DEBIAN_FRONTEND=noninteractive
 chroot chroot apt-get --yes purge $(cat package-lists/dpkg.cleanup)
 chroot chroot rm -rf /usr/lib/xorg/modules/linux /usr/lib/xorg/modules/extensions /usr/lib/xorg/modules /usr/lib/xorg
 chroot chroot apt-get --yes autoremove
