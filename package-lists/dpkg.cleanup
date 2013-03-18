@@ -2,8 +2,6 @@ alsa*
 aptitude
 aspell-en
 blt
-console-setup
-consolekit
 cups-bsd
 dbus-x11
 desktop-base
