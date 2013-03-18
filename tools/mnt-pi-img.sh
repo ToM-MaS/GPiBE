@@ -39,6 +39,8 @@ if [ "${IMAGE}" != "-u" ]; then
 		
 		cp -f /usr/bin/qemu-arm-static "${MOUNTPOINT}/usr/bin/qemu-arm-static"
 		[ -e "${MOUNTPOINT}/etc/ld.so.conf" ] && sed -i 's/^/#/' "${MOUNTPOINT}/etc/ld.so.conf"
+		echo "export LC_ALL=C" > "${MOUNTPOINT}/root/.bashrc"
+		echo "export PS1=\"(GPiBE) $PS1\"" >> "${MOUNTPOINT}/root/.bashrc"
 	else
 		echo -e "\nERROR: Image file '${IMAGE}' not found."
 		exit 1
