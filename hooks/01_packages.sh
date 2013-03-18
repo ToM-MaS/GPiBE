@@ -1,5 +1,10 @@
 #!/bin/bash -e
 
+# Disable init-scripts
+echo '#!/bin/sh' > /usr/sbin/policy-rc.d
+echo 'exit 101' >> /usr/sbin/policy-rc.d
+chmod 755 /usr/sbin/policy-rc.d
+
 # Copy archives from GBE Debian Live repo
 for FILE in /be/archives/*.list.chroot; do
 	DEST_FILE="/etc/apt/sources.list.d/`basename "${FILE%%.*}"`.list"
@@ -30,3 +35,5 @@ for FILE in /be/upstream/GBE/config.v3/package-lists/*.list.chroot; do
 	[ "${FILE##*/}" == "01-gdfdl_system.list.chroot" || "${FILE##*/}" == "02-gemeinschaft_system.list.chroot" ] && continue
 	apt-get --yes install $(cat ${FILE} | grep -Ev ^# | grep -Ev "^$")
 done
+
+rm -f /usr/sbin/policy-rc.d
