@@ -18,6 +18,9 @@ apt-get clean 2>&1
 for FILE in /be/upstream/GBE/config.v3/preseed/*.cfg.chroot; do
 	debconf-set-selections "${FILE}"
 done
+for FILE in /be/preseed/*.cfg.chroot; do
+	debconf-set-selections "${FILE}"
+done
 
 # Install packages
 for FILE in /be/package-lists/*.list.chroot; do
