@@ -24,7 +24,7 @@ mkdir -p chroot/be
 mount -o bind ./ chroot/be
 
 # Shrink image
-chroot chroot apt-get --yes purge $(cat /be/package-lists/dpkg.cleanup)
+chroot chroot apt-get --yes purge $(cat package-lists/dpkg.cleanup)
 chroot chroot rm -rf /usr/lib/xorg/modules/linux /usr/lib/xorg/modules/extensions /usr/lib/xorg/modules /usr/lib/xorg
 chroot chroot apt-get --yes autoremove
 chroot chroot apt-get --yes autoclean

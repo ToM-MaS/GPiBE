@@ -201,7 +201,7 @@ libxvidcore4
 libxxf86dga1
 libxxf86vm1
 lightdm
-libx{composite,cb,cursor,damage,dmcp,ext,font,ft,i,inerama,kbfile,klavier,mu,pm,randr,render,res,t,xf86}*
+libx*
 lightdm-gtk-greeter
 lxappearance
 lxde*
@@ -212,7 +212,6 @@ lxpolkit
 lxrandr
 lxtask
 lxterminal
-lx{input,menu-data,panel,polkit,randr,session,session-edit,shortcut,task,terminal}
 menu-xdg
 midori
 nano
