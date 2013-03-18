@@ -15,7 +15,7 @@ cd $(dirname $(readlink -f $0))
 
 # Download Image
 [[ ! -e "${IMAGE_ARCHIVE_FILE}" && ! -e "${IMAGE_FILE}" && ! -e "${GPI_IMAGE}" ]] && wget "${RPI_IMAGE_SRC_URL}" -O "${IMAGE_ARCHIVE_FILE}"
-[ ! -e "${IMAGE_FILE}" ] && unzip "${IMAGE_ARCHIVE_FILE}" -d "${IMAGE_ARCHIVE_FILE##*/}"
+[ ! -e "${IMAGE_FILE}" ] && unzip "${IMAGE_ARCHIVE_FILE}" -d "${IMAGE_ARCHIVE_FILE%%/*}"
 [ ! -e "${GPI_IMAGE}" ] && cp "${IMAGE_FILE}" "${GPI_IMAGE}"
 
 # Mount
