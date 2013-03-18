@@ -8,6 +8,7 @@ fi
 IMAGE="$1"
 MOUNTPOINT="`readlink -f $2`"
 
+[[ "x`cat /proc/mounts | grep ${MOUNTPOINT}/be`" != "x" ]] && sudo umount -l "${MOUNTPOINT}/be"
 [[ "x`cat /proc/mounts | grep ${MOUNTPOINT}/boot`" != "x" ]] && sudo umount -l "${MOUNTPOINT}/boot"
 [[ "x`cat /proc/mounts | grep ${MOUNTPOINT}/dev/pts`" != "x" ]] && sudo umount -l "${MOUNTPOINT}/dev/pts"
 [[ "x`cat /proc/mounts | grep ${MOUNTPOINT}/sys`" != "x" ]] && sudo umount -l "${MOUNTPOINT}/sys"
@@ -40,7 +41,8 @@ if [ "${IMAGE}" != "-u" ]; then
 		cp -f /usr/bin/qemu-arm-static "${MOUNTPOINT}/usr/bin/qemu-arm-static"
 		[ -e "${MOUNTPOINT}/etc/ld.so.preload" ] && sed -i 's/^/#/' "${MOUNTPOINT}/etc/ld.so.preload"
 		echo "export LC_ALL=C" > "${MOUNTPOINT}/root/.bashrc"
-		echo "export PS1=\"(GPiBE) $PS1\"" >> "${MOUNTPOINT}/root/.bashrc"
+		echo "export PS1=\"(GPiBE) \$PS1\"" >> "${MOUNTPOINT}/root/.bashrc"
+		cat /proc/mounts > "${MOUNTPOINT}/etc/mtab"
 	else
 		echo -e "\nERROR: Image file '${IMAGE}' not found."
 		exit 1
