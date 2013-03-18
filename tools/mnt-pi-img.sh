@@ -8,11 +8,14 @@ fi
 IMAGE="$1"
 MOUNTPOINT="`readlink -f $2`"
 
-[[ "x`cat /proc/mounts | grep ${MOUNTPOINT}/boot`" != "x" ]] && sudo umount "${MOUNTPOINT}/boot"
-[[ "x`cat /proc/mounts | grep ${MOUNTPOINT}/dev/pts`" != "x" ]] && sudo umount "${MOUNTPOINT}/dev/pts"
-[[ "x`cat /proc/mounts | grep ${MOUNTPOINT}/sys`" != "x" ]] && sudo umount "${MOUNTPOINT}/sys"
-[[ "x`cat /proc/mounts | grep ${MOUNTPOINT}/proc`" != "x" ]] && sudo umount "${MOUNTPOINT}/proc"
-[[ "x`cat /proc/mounts | grep ${MOUNTPOINT}`" != "x" ]] && sudo umount "${MOUNTPOINT}"
+[[ "x`cat /proc/mounts | grep ${MOUNTPOINT}/boot`" != "x" ]] && sudo umount -l "${MOUNTPOINT}/boot"
+[[ "x`cat /proc/mounts | grep ${MOUNTPOINT}/dev/pts`" != "x" ]] && sudo umount -l "${MOUNTPOINT}/dev/pts"
+[[ "x`cat /proc/mounts | grep ${MOUNTPOINT}/sys`" != "x" ]] && sudo umount -l "${MOUNTPOINT}/sys"
+[[ "x`cat /proc/mounts | grep ${MOUNTPOINT}/proc`" != "x" ]] && sudo umount -l "${MOUNTPOINT}/proc"
+if [[ "x`cat /proc/mounts | grep ${MOUNTPOINT}`" != "x" ]]; then
+	[ -e "${MOUNTPOINT}/etc/ld.so.conf" ] && sed -i 's/^#//' "${MOUNTPOINT}/etc/ld.so.conf"
+	sudo umount -l "${MOUNTPOINT}"
+fi
 
 if [ "${IMAGE}" != "-u" ]; then
 	if [ -e "${IMAGE}" ]; then
@@ -25,8 +28,8 @@ if [ "${IMAGE}" != "-u" ]; then
 			exit 1
 		fi
 
-		OFFSET_BOOT=`sfdisk -uS -l "${IMAGE}" | grep img1 | awk '{print $2}'`
-		OFFSET_ROOT=`sfdisk -uS -l "${IMAGE}" | grep img2 | awk '{print $2}'`
+		OFFSET_BOOT=`sfdisk -uS -l "${IMAGE}" 2>/dev/null | grep img1 | awk '{print $2}'`
+		OFFSET_ROOT=`sfdisk -uS -l "${IMAGE}" 2>/dev/null | grep img2 | awk '{print $2}'`
 
 		sudo mount -o loop,offset=$((512*${OFFSET_ROOT})) "${IMAGE}" "${MOUNTPOINT}"
 		sudo mount -o loop,offset=$((512*${OFFSET_BOOT})) "${IMAGE}" "${MOUNTPOINT}/boot"
@@ -35,6 +38,7 @@ if [ "${IMAGE}" != "-u" ]; then
 		sudo mount -o bind /proc "${MOUNTPOINT}/proc"
 		
 		cp -f /usr/bin/qemu-arm-static "${MOUNTPOINT}/usr/bin/qemu-arm-static"
+		[ -e "${MOUNTPOINT}/etc/ld.so.conf" ] && sed -i 's/^/#/' "${MOUNTPOINT}/etc/ld.so.conf"
 	else
 		echo -e "\nERROR: Image file '${IMAGE}' not found."
 		exit 1
