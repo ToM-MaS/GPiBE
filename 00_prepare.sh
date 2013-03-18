@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 . GPiBE.conf
 
@@ -18,23 +18,30 @@ else
 fi
 
 # Download Image
-[[ ! -e "${IMAGE_ARCHIVE_FILE}" && ! -e "${IMAGE_FILE}" && ! -e "${GPI_IMAGE}" ]] && wget "${RPI_IMAGE_SRC_URL}" -O "${IMAGE_ARCHIVE_FILE}"
+if [[ ! -e "${IMAGE_ARCHIVE_FILE}" && ! -e "${IMAGE_FILE}" && ! -e "${GPI_IMAGE}" ]]; then
+	echo -e "GPiBE: Downloading Raspbian base image ..."
+	wget "${RPI_IMAGE_SRC_URL}" -O "${IMAGE_ARCHIVE_FILE}"
+fi
 [ ! -e "${IMAGE_FILE}" ] && unzip "${IMAGE_ARCHIVE_FILE}" -d "${IMAGE_ARCHIVE_FILE%%/*}"
 [ ! -e "${GPI_IMAGE}" ] && cp "${IMAGE_FILE}" "${GPI_IMAGE}"
 
 # Mount
+echo -e "GPiBE: Mounting image ..."
 ${MNT} "${GPI_IMAGE}" chroot
 [ ! -d chroot/be ] && mkdir -p chroot/be
+echo -e "GPiBE: Mounting Build Environment ..."
 mount -o bind ./ chroot/be
 
 # Shrink image
-chroot chroot apt-get --yes purge $(cat package-lists/dpkg.cleanup)
+echo -e "GPiBE: Removing abundant packages to shrink image ..."
+chroot chroot LC_ALL=C apt-get --yes purge $(cat package-lists/dpkg.cleanup)
 chroot chroot rm -rf /usr/lib/xorg/modules/linux /usr/lib/xorg/modules/extensions /usr/lib/xorg/modules /usr/lib/xorg
-chroot chroot apt-get --yes autoremove
-chroot chroot apt-get --yes autoclean
-chroot chroot apt-get --yes clean
+chroot chroot LC_ALL=C apt-get --yes autoremove
+chroot chroot LC_ALL=C apt-get --yes autoclean
+chroot chroot LC_ALL=C apt-get --yes clean
 
 # umount
+echo -e "GPiBE: Unmounting image ..."
 ${MNT} -u chroot
 
 cd - 2>&1>/dev/null
