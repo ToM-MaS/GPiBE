@@ -40,6 +40,7 @@ if [ "${IMAGE}" != "-u" ]; then
 		
 		cp -f /usr/bin/qemu-arm-static "${MOUNTPOINT}/usr/bin/qemu-arm-static"
 		[ -e "${MOUNTPOINT}/etc/ld.so.preload" ] && sed -i 's/^/#/' "${MOUNTPOINT}/etc/ld.so.preload"
+		echo "export LC_ALL=C" > "${MOUNTPOINT}/etc/environment"
 		echo "export LC_ALL=C" > "${MOUNTPOINT}/root/.bashrc"
 		echo "export PS1=\"(GPiBE) \$PS1\"" >> "${MOUNTPOINT}/root/.bashrc"
 		cat /proc/mounts > "${MOUNTPOINT}/etc/mtab"

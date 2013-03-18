@@ -9,9 +9,13 @@ GPI_IMAGE="images/gs5-rpi.img"
 
 cd $(dirname $(readlink -f $0))
 
-[ ! -d ./cache ] && mkdir -p ./cache
-[ ! -d ./chroot ] && mkdir -p ./chroot
-[ ! -d ./images ] && mkdir -p ./images
+[ ! -d cache ] && mkdir cache
+[ ! -d chroot ] && mkdir chroot
+if [ ! -d ./images ]; then
+	mkdir images
+else
+	rm images/*
+fi
 
 # Download Image
 [[ ! -e "${IMAGE_ARCHIVE_FILE}" && ! -e "${IMAGE_FILE}" && ! -e "${GPI_IMAGE}" ]] && wget "${RPI_IMAGE_SRC_URL}" -O "${IMAGE_ARCHIVE_FILE}"

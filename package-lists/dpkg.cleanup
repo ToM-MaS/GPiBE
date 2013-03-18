@@ -201,7 +201,6 @@ libxvidcore4
 libxxf86dga1
 libxxf86vm1
 lightdm
-libx*
 lightdm-gtk-greeter
 lxappearance
 lxde*
