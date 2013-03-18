@@ -13,7 +13,7 @@ MOUNTPOINT="`readlink -f $2`"
 [[ "x`cat /proc/mounts | grep ${MOUNTPOINT}/sys`" != "x" ]] && sudo umount -l "${MOUNTPOINT}/sys"
 [[ "x`cat /proc/mounts | grep ${MOUNTPOINT}/proc`" != "x" ]] && sudo umount -l "${MOUNTPOINT}/proc"
 if [[ "x`cat /proc/mounts | grep ${MOUNTPOINT}`" != "x" ]]; then
-	[ -e "${MOUNTPOINT}/etc/ld.so.conf" ] && sed -i 's/^#//' "${MOUNTPOINT}/etc/ld.so.conf"
+	[ -e "${MOUNTPOINT}/etc/ld.so.preload" ] && sed -i 's/^#//' "${MOUNTPOINT}/etc/ld.so.preload"
 	sudo umount -l "${MOUNTPOINT}"
 fi
 
@@ -38,7 +38,7 @@ if [ "${IMAGE}" != "-u" ]; then
 		sudo mount -o bind /proc "${MOUNTPOINT}/proc"
 		
 		cp -f /usr/bin/qemu-arm-static "${MOUNTPOINT}/usr/bin/qemu-arm-static"
-		[ -e "${MOUNTPOINT}/etc/ld.so.conf" ] && sed -i 's/^/#/' "${MOUNTPOINT}/etc/ld.so.conf"
+		[ -e "${MOUNTPOINT}/etc/ld.so.preload" ] && sed -i 's/^/#/' "${MOUNTPOINT}/etc/ld.so.preload"
 		echo "export LC_ALL=C" > "${MOUNTPOINT}/root/.bashrc"
 		echo "export PS1=\"(GPiBE) $PS1\"" >> "${MOUNTPOINT}/root/.bashrc"
 	else
