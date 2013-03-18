@@ -14,7 +14,7 @@ ${MNT} "${GPI_IMAGE}" chroot
 mount -o bind ./ chroot/be
 
 echo -e "GPiBE: Running hooks ..."
-for FILE in hooks/*.sh; do
+for FILE in hooks/*.sh.chroot; do
 	sudo chroot chroot /be/${FILE}
 done
 

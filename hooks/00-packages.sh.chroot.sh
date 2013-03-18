@@ -1,4 +1,12 @@
 #!/bin/bash -e
+#
+# GemeinschaftPi
+# Install packages
+#
+# Copyright (c) 2013, Julian Pawlowski <jp@jps-networks.eu>
+# See LICENSE.GPiBE file for details.
+#
+
 
 # Disable init-scripts
 echo '#!/bin/sh' > /usr/sbin/policy-rc.d
@@ -19,20 +27,20 @@ apt-get update 2>&1
 apt-get -y --force-yes upgrade 2>&1
 apt-get clean 2>&1
 
-# load preseeds
-for FILE in /be/upstream/GBE/config.v3/preseed/*.cfg.chroot; do
-	debconf-set-selections "${FILE}"
-done
-for FILE in /be/preseed/*.cfg.chroot; do
-	debconf-set-selections "${FILE}"
-done
-
 # Install packages
 for FILE in /be/package-lists/*.list.chroot; do
+	# load preseeds
+	for FILE in /be/upstream/GBE/config.v3/preseed/*.cfg.chroot; do
+		debconf-set-selections "${FILE}"
+	done
+	for FILE in /be/preseed/*.cfg.chroot; do
+		debconf-set-selections "${FILE}"
+	done
+
 	apt-get --yes install $(cat ${FILE} | grep -Ev ^# | grep -Ev "^$")
 done
 for FILE in /be/upstream/GBE/config.v3/package-lists/*.list.chroot; do
-	[ "${FILE##*/}" == "01-gdfdl_system.list.chroot" || "${FILE##*/}" == "02-gemeinschaft_system.list.chroot" ] && continue
+	[[ "${FILE##*/}" == "01-gdfdl_system.list.chroot" || "${FILE##*/}" == "02-gemeinschaft_system.list.chroot" ]] && continue
 	apt-get --yes install $(cat ${FILE} | grep -Ev ^# | grep -Ev "^$")
 done
 
