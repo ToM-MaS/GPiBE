@@ -35,9 +35,22 @@ ${MNT} "${GPI_IMAGE}" chroot
 echo -e "GPiBE: Mounting Build Environment ..."
 mount -o bind ./ chroot/be
 
+echo -e "GPiBE: Set Time Zone ...\n"
+echo ${TIMEZONE} > chroot/etc/timezone
+cp chroot/usr/share/zoneinfo/${TIMEZONE} chroot/etc/localtime
+
+echo -e "GPiBE: Set locale settings ...\n"
+echo "LANG=en_US.UTF-8" > chroot/etc/locale
+echo "de_DE ISO-8859-1" > chroot/etc/locale.gen
+echo "de_DE.UTF-8 UTF-8" >> chroot/etc/locale.gen
+echo "de_DE@euro ISO-8859-15" >> chroot/etc/locale.gen
+echo "en_US ISO-8859-1" >> chroot/etc/locale.gen
+echo "en_US.ISO-8859-15 ISO-8859-15" >> chroot/etc/locale.gen
+echo "en_US.UTF-8 UTF-8" >> chroot/etc/locale.gen
+chroot chroot locale-gen 2>&1 >/dev/null
+
 # Shrink image
 echo -e "GPiBE: Removing abundant packages to shrink image ..."
-export LC_ALL=C
 export DEBIAN_FRONTEND=noninteractive
 chroot chroot apt-get --yes purge $(cat package-lists/dpkg.cleanup)
 chroot chroot rm -rf /usr/lib/xorg/modules/linux /usr/lib/xorg/modules/extensions /usr/lib/xorg/modules /usr/lib/xorg
