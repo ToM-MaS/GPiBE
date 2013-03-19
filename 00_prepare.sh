@@ -5,17 +5,12 @@
 IMAGE_ARCHIVE_FILE="cache/${RPI_IMAGE_SRC_URL##*/}"
 IMAGE_FILE="${IMAGE_ARCHIVE_FILE%%.*}.img"
 MNT="tools/mnt-pi-img.sh"
-GPI_IMAGE="images/gs5-rpi.img"
+GPI_IMAGE="cache/gs5-rpi-tmpl.img"
 
 cd $(dirname $(readlink -f $0))
 
 [ ! -d cache ] && mkdir cache
 [ ! -d chroot ] && mkdir chroot
-if [ ! -d ./images ]; then
-	mkdir images
-else
-	rm -f images/*
-fi
 
 # Download Image
 if [[ ! -e "${IMAGE_ARCHIVE_FILE}" && ! -e "${IMAGE_FILE}" && ! -e "${GPI_IMAGE}" ]]; then
