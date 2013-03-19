@@ -58,7 +58,7 @@ chmod 755 chroot/usr/sbin/policy-rc.d
 echo -e "GPiBE: Removing abundant packages to shrink image ..."
 export DEBIAN_FRONTEND=noninteractive
 chroot chroot apt-get --yes purge $(cat package-lists/dpkg.cleanup)
-chroot chroot rm -rf /usr/lib/xorg/modules/linux /usr/lib/xorg/modules/extensions /usr/lib/xorg/modules /usr/lib/xorg /etc/polkit-1
+chroot chroot rm -rf /usr/lib/xorg/modules/linux /usr/lib/xorg/modules/extensions /usr/lib/xorg/modules /usr/lib/xorg /etc/polkit-1 /etc/skel/pistore.desktop
 chroot chroot apt-get --yes autoremove
 chroot chroot apt-get --yes autoclean
 chroot chroot apt-get --yes clean

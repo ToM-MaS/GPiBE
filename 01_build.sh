@@ -15,6 +15,7 @@ mount -o bind ./ chroot/be
 
 # Compatibility with GBE
 ln -s be/GPiBE.conf chroot/gdfdl.conf
+echo "rpi" > chroot/etc/gdfdl_build
 
 echo -e "GPiBE: Running hooks ..."
 for FILE in `find hooks -name "*.sh.chroot" | sort`; do
