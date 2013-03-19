@@ -30,40 +30,40 @@ fi
 
 # Mount
 echo -e "GPiBE: Mounting image ..."
-${MNT} "${GPI_IMAGE}" chroot
-[ ! -d chroot/be ] && mkdir -p chroot/be
+sudo ${MNT} "${GPI_IMAGE}" chroot
+[ ! -d chroot/be ] && sudo mkdir -p chroot/be
 echo -e "GPiBE: Mounting Build Environment ..."
-mount -o bind ./ chroot/be
+sudo mount -o bind ./ chroot/be
 
 echo -e "GPiBE: Set Time Zone ...\n"
-echo ${TIMEZONE} > chroot/etc/timezone
-cp chroot/usr/share/zoneinfo/${TIMEZONE} chroot/etc/localtime
+sudo echo ${TIMEZONE} > chroot/etc/timezone
+sudo cp chroot/usr/share/zoneinfo/${TIMEZONE} chroot/etc/localtime
 
 echo -e "GPiBE: Set locale settings ...\n"
-echo "LANG=en_US.UTF-8" > chroot/etc/locale
-echo "de_DE ISO-8859-1" > chroot/etc/locale.gen
-echo "de_DE.UTF-8 UTF-8" >> chroot/etc/locale.gen
-echo "de_DE@euro ISO-8859-15" >> chroot/etc/locale.gen
-echo "en_US ISO-8859-1" >> chroot/etc/locale.gen
-echo "en_US.ISO-8859-15 ISO-8859-15" >> chroot/etc/locale.gen
-echo "en_US.UTF-8 UTF-8" >> chroot/etc/locale.gen
-chroot chroot locale-gen 2>&1 >/dev/null
+sudo echo "LANG=en_US.UTF-8" > chroot/etc/locale
+sudo echo "de_DE ISO-8859-1" > chroot/etc/locale.gen
+sudo echo "de_DE.UTF-8 UTF-8" >> chroot/etc/locale.gen
+sudo echo "de_DE@euro ISO-8859-15" >> chroot/etc/locale.gen
+sudo echo "en_US ISO-8859-1" >> chroot/etc/locale.gen
+sudo echo "en_US.ISO-8859-15 ISO-8859-15" >> chroot/etc/locale.gen
+sudo echo "en_US.UTF-8 UTF-8" >> chroot/etc/locale.gen
+sudo chroot chroot locale-gen 2>&1 >/dev/null
 
 # Disable init-scripts
-echo '#!/bin/sh' > chroot/usr/sbin/policy-rc.d
-echo 'exit 101' >> chroot/usr/sbin/policy-rc.d
-chmod 755 chroot/usr/sbin/policy-rc.d
+sudo echo '#!/bin/sh' > chroot/usr/sbin/policy-rc.d
+sudo echo 'exit 101' >> chroot/usr/sbin/policy-rc.d
+sudo chmod 755 chroot/usr/sbin/policy-rc.d
 
 # Shrink image
 echo -e "GPiBE: Removing abundant packages to shrink image ..."
 export DEBIAN_FRONTEND=noninteractive
-chroot chroot apt-get --yes purge $(cat package-lists/dpkg.cleanup)
-chroot chroot rm -rf /usr/lib/xorg/modules/linux /usr/lib/xorg/modules/extensions /usr/lib/xorg/modules /usr/lib/xorg /etc/polkit-1 /etc/skel/pistore.desktop
-chroot chroot apt-get --yes autoremove
-chroot chroot apt-get --yes autoclean
-chroot chroot apt-get --yes clean
+sudo chroot chroot apt-get --yes purge $(cat package-lists/dpkg.cleanup)
+sudo chroot chroot rm -rf /usr/lib/xorg/modules/linux /usr/lib/xorg/modules/extensions /usr/lib/xorg/modules /usr/lib/xorg /etc/polkit-1 /etc/skel/pistore.desktop
+sudo chroot chroot apt-get --yes autoremove
+sudo chroot chroot apt-get --yes autoclean
+sudo chroot chroot apt-get --yes clean
 
-rm -f chroot/usr/sbin/policy-rc.d
+sudo rm -f chroot/usr/sbin/policy-rc.d
 
 # umount
 echo -e "GPiBE: Unmounting image ..."
