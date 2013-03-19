@@ -23,9 +23,9 @@ cp -f "${GPI_IMAGE_TMPL}" "${GPI_IMAGE}"
 
 # Mount
 echo -e "GPiBE: Mounting image ..."
-${MNT} "${GPI_IMAGE}" chroot
+sudo ${MNT} "${GPI_IMAGE}" chroot
 [ ! -d chroot/be ] && mkdir -p chroot/be
-mount -o bind ./ chroot/be
+sudo mount -o bind ./ chroot/be
 
 # Check for existing upstream projects
 if [ ! -d upstream/GBE ]; then
@@ -43,7 +43,7 @@ fi
 
 # Compatibility with GBE
 ln -s be/GPiBE.conf chroot/gdfdl.conf
-echo "rpi" > chroot/etc/gdfdl_build
+sudo sh -c "echo \"rpi\" > chroot/etc/gdfdl_build"
 
 echo -e "GPiBE: Running hooks ..."
 for FILE in `find hooks -name "*.sh.chroot" | sort`; do
