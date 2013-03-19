@@ -3,7 +3,7 @@
 . GPiBE.conf
 
 MNT="tools/mnt-pi-img.sh"
-GPI_IMAGE_TMPL="images/gs5-rpi-tmpl.img"
+GPI_IMAGE_TMPL="cache/gs5-rpi-tmpl.img"
 GPI_IMAGE="images/gs5-rpi.img"
 
 cd $(dirname $(readlink -f $0))
