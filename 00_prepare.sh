@@ -16,8 +16,12 @@ cd $(dirname $(readlink -f $0))
 if [[ ! -e "${IMAGE_ARCHIVE_FILE}" && ! -e "${IMAGE_FILE}" && ! -e "${GPI_IMAGE}" ]]; then
 	echo -e "GPiBE: Downloading Raspbian base image ..."
 	wget "${RPI_IMAGE_SRC_URL}" -O "${IMAGE_ARCHIVE_FILE}"
+	rm -f "${GPI_IMAGE}"
 fi
-[ ! -e "${IMAGE_FILE}" ] && unzip "${IMAGE_ARCHIVE_FILE}" -d "${IMAGE_ARCHIVE_FILE%%/*}"
+if [ ! -e "${IMAGE_FILE}" ]; then
+	unzip "${IMAGE_ARCHIVE_FILE}" -d "${IMAGE_ARCHIVE_FILE%%/*}"
+	rm -f "${GPI_IMAGE}"
+fi
 if [ ! -e "${GPI_IMAGE}" ]; then
 	echo -e "GPiBE: Creating working image copy ..."
 	cp -f "${IMAGE_FILE}" "${GPI_IMAGE}"
