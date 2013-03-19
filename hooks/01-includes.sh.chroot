@@ -9,10 +9,10 @@
 
 # Copy includes.chroot from GBE Debian Live repo
 echo -e "GPiBE: Copy includes.chroot from GBE upstream ..."
-cp -arfv /be/upstream/GBE/config.v3/includes.chroot/* /
+cp -rfv /be/upstream/GBE/config.v3/includes.chroot/* /
 
 # Copy includes.chroot
 if [ -d /be/includes.chroot ]; then
 	echo -e "GPiBE: Copy includes.chroot ..."
-	cp -arfv /be/includes.chroot/* /
+	cp -rfv /be/includes.chroot/* /
 fi
