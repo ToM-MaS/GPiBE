@@ -19,7 +19,7 @@ if [ ! -d "${GPI_IMAGE%%/*}" ]; then
 else
 	rm -f "${GPI_IMAGE%%/*}/"*
 fi
-cp "${GPI_IMAGE_TMPL}" "${GPI_IMAGE}"
+cp -f "${GPI_IMAGE_TMPL}" "${GPI_IMAGE}"
 
 # Mount
 echo -e "GPiBE: Mounting image ..."
