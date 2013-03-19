@@ -31,9 +31,6 @@ if [ ! -e "${GPI_IMAGE}" ]; then
 	# Mount
 	echo -e "GPiBE: Mounting image ..."
 	sudo ${MNT} "${GPI_IMAGE}" chroot
-	[ ! -d chroot/be ] && sudo mkdir -p chroot/be
-	echo -e "GPiBE: Mounting Build Environment ..."
-	sudo mount -o bind ./ chroot/be
 
 	echo -e "GPiBE: Set Time Zone ...\n"
 	sudo sh -c "echo ${TIMEZONE} > chroot/etc/timezone"

@@ -13,6 +13,7 @@ MOUNTPOINT="`readlink -f $2`"
 [[ "x`cat /proc/mounts | grep ${MOUNTPOINT}/dev/pts`" != "x" ]] && sudo umount -l "${MOUNTPOINT}/dev/pts"
 [[ "x`cat /proc/mounts | grep ${MOUNTPOINT}/sys`" != "x" ]] && sudo umount -l "${MOUNTPOINT}/sys"
 [[ "x`cat /proc/mounts | grep ${MOUNTPOINT}/proc`" != "x" ]] && sudo umount -l "${MOUNTPOINT}/proc"
+[ -d "${MOUNTPOINT}/be" ] && sudo rmdir "${MOUNTPOINT}/be"
 if [[ "x`cat /proc/mounts | grep ${MOUNTPOINT}`" != "x" ]]; then
 	[ -e "${MOUNTPOINT}/etc/ld.so.preload" ] && sed -i 's/^#//' "${MOUNTPOINT}/etc/ld.so.preload"
 	sudo umount -l "${MOUNTPOINT}"
@@ -37,7 +38,9 @@ if [ "${IMAGE}" != "-u" ]; then
 		sudo mount -o bind /dev/pts "${MOUNTPOINT}/dev/pts"
 		sudo mount -o bind /sys "${MOUNTPOINT}/sys"
 		sudo mount -o bind /proc "${MOUNTPOINT}/proc"
-		
+		[ ! -d "${MOUNTPOINT}/be" ] && sudo mkdir -p "${MOUNTPOINT}/be"
+		sudo mount -o bind "${MOUNTPOINT}/../" "${MOUNTPOINT}/be"
+
 		cp -f /usr/bin/qemu-arm-static "${MOUNTPOINT}/usr/bin/qemu-arm-static"
 		[ -e "${MOUNTPOINT}/etc/ld.so.preload" ] && sed -i 's/^/#/' "${MOUNTPOINT}/etc/ld.so.preload"
 		echo "export LC_ALL=C" > "${MOUNTPOINT}/etc/environment"

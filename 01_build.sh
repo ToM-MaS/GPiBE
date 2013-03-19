@@ -24,8 +24,6 @@ cp -f "${GPI_IMAGE_TMPL}" "${GPI_IMAGE}"
 # Mount
 echo -e "GPiBE: Mounting image ..."
 sudo ${MNT} "${GPI_IMAGE}" chroot
-[ ! -d chroot/be ] && mkdir -p chroot/be
-sudo mount -o bind ./ chroot/be
 
 # Check for existing upstream projects
 if [ ! -d upstream/GBE ]; then
@@ -35,14 +33,16 @@ fi
 if [ -d upstream/GSE ]; then
 	echo -e "GPiBE: GSE upstream found, copy to image ..."
 	sudo cp -arfv upstream/GSE chroot/opt
+	sudo chown root.root chroot/opt/GSE -R
 fi
 if [ -d upstream/GS5 ]; then
 	echo -e "GPiBE: GS5 upstream found, copy to image ..."
 	sudo cp -arfv upstream/GS5 chroot/opt
+	sudo chown root.root chroot/opt/GS5 -R
 fi
 
 # Compatibility with GBE
-ln -s be/GPiBE.conf chroot/gdfdl.conf
+sudo ln -s be/GPiBE.conf chroot/gdfdl.conf
 sudo sh -c "echo \"rpi\" > chroot/etc/gdfdl_build"
 
 echo -e "GPiBE: Running hooks ..."
