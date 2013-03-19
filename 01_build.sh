@@ -7,6 +7,16 @@ GPI_IMAGE="images/gs5-rpi.img"
 
 cd $(dirname $(readlink -f $0))
 
+# Check for existing upstream projects
+if [ ! -d upstream/GBE ]; then
+	echo -e "GPiBE: Cloning GBE ..."
+	git clone -b master ${GBE_GIT_URL} upstream/GBE
+fi
+if [ ! -d upstream/GSE ]; then
+	echo -e "GPiBE: Cloning GSE ..."
+	git clone -b master ${GSE_GIT_URL} upstream/GSE
+fi
+
 # Mount
 echo -e "GPiBE: Mounting image ..."
 ${MNT} "${GPI_IMAGE}" chroot
