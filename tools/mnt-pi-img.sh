@@ -15,7 +15,7 @@ MOUNTPOINT="`readlink -f $2`"
 [[ "x`cat /proc/mounts | grep ${MOUNTPOINT}/proc`" != "x" ]] && sudo umount -l "${MOUNTPOINT}/proc"
 [ -d "${MOUNTPOINT}/be" ] && sudo rmdir "${MOUNTPOINT}/be"
 if [[ "x`cat /proc/mounts | grep ${MOUNTPOINT}`" != "x" ]]; then
-	[ -e "${MOUNTPOINT}/etc/ld.so.preload" ] && sed -i 's/^#//' "${MOUNTPOINT}/etc/ld.so.preload"
+	[ -e "${MOUNTPOINT}/etc/ld.so.preload" ] && sudo sed -i 's/^#//' "${MOUNTPOINT}/etc/ld.so.preload"
 	sudo umount -l "${MOUNTPOINT}"
 fi
 
@@ -41,12 +41,12 @@ if [ "${IMAGE}" != "-u" ]; then
 		[ ! -d "${MOUNTPOINT}/be" ] && sudo mkdir -p "${MOUNTPOINT}/be"
 		sudo mount -o bind "${MOUNTPOINT}/../" "${MOUNTPOINT}/be"
 
-		cp -f /usr/bin/qemu-arm-static "${MOUNTPOINT}/usr/bin/qemu-arm-static"
-		[ -e "${MOUNTPOINT}/etc/ld.so.preload" ] && sed -i 's/^/#/' "${MOUNTPOINT}/etc/ld.so.preload"
-		echo "export LC_ALL=C" > "${MOUNTPOINT}/etc/environment"
-		echo "export LC_ALL=C" > "${MOUNTPOINT}/root/.bashrc"
-		echo "export PS1=\"(GPiBE) \$PS1\"" >> "${MOUNTPOINT}/root/.bashrc"
-		cat /proc/mounts > "${MOUNTPOINT}/etc/mtab"
+		sudo cp -f /usr/bin/qemu-arm-static "${MOUNTPOINT}/usr/bin/qemu-arm-static"
+		[ -e "${MOUNTPOINT}/etc/ld.so.preload" ] && sudo sed -i 's/^/#/' "${MOUNTPOINT}/etc/ld.so.preload"
+		sudo sh -c "echo \"export LC_ALL=C\" > \"${MOUNTPOINT}/etc/environment\""
+		sudo sh -c "echo \"export LC_ALL=C\" > "${MOUNTPOINT}/root/.bashrc""
+		sudo sh -c "echo \"export PS1=\"\(GPiBE\) \$PS1\"\" >> \"${MOUNTPOINT}/root/.bashrc\""
+		[ ! -e "${MOUNTPOINT}/etc/mtab" ] && sudo ln -s /proc/mounts "${MOUNTPOINT}/etc/mtab"
 	else
 		echo -e "\nERROR: Image file '${IMAGE}' not found."
 		exit 1

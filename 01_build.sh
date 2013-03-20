@@ -59,6 +59,6 @@ done
 
 # umount
 echo -e "GPiBE: Unmounting image ..."
-${MNT} -u chroot
+sudo ${MNT} -u chroot
 
 cd - 2>&1>/dev/null

@@ -64,7 +64,7 @@ if [ ! -e "${GPI_IMAGE}" ]; then
 
 	# umount
 	echo -e "GPiBE: Unmounting image ..."
-	${MNT} -u chroot
+	sudo ${MNT} -u chroot
 fi
 
 # write branch information to local file
