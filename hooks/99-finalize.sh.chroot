@@ -1,0 +1,19 @@
+#!/bin/bash
+#
+# GemeinschaftPi
+# Finalize configuration
+#
+# Copyright (c) 2013, Julian Pawlowski <jp@jps-networks.eu>
+# See LICENSE.GPiBE file for details.
+#
+
+[ -e /etc/gemeinschaft/system.conf ] && source /etc/gemeinschaft/system.conf || echo "FATAL ERROR: Local configuration file in /etc/gemeinschaft/system.conf missing"
+
+# let GPU use a minimum of RAM
+echo gpu_mem=16 >> /boot/config.txt
+
+# Set overclocking to "high"
+echo core_freq=250 >> /boot/config.txt
+echo sdram_freq=450 >> /boot/config.txt
+echo over_voltage=6 >> /boot/config.txt
+echo force_turbo=0 >> /boot/config.txt
