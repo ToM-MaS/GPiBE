@@ -7,6 +7,8 @@
 # See LICENSE.GPiBE file for details.
 #
 
+[ -e /etc/environment ] && . /etc/environment
+
 # Copy includes.chroot from GBE Debian Live repo
 echo -e "GPiBE: Copy includes.chroot from GBE upstream ..."
 cp -rfv /be/upstream/GBE/config.v3/includes.chroot/* /

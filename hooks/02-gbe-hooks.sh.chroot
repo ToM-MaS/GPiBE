@@ -7,6 +7,8 @@
 # See LICENSE.GPiBE file for details.
 #
 
+[ -e /etc/environment ] && . /etc/environment
+
 echo -e "GPiBE: Now running hook files from GBE upstream ..."
 for FILE in /be/upstream/GBE/config.v3/hooks/*.sh.chroot; do
 	${FILE}
