@@ -61,4 +61,31 @@ done
 echo -e "GPiBE: Unmounting image ..."
 sudo ${MNT} -u chroot
 
+# Compress image
+echo -e "GPiBE: Compressing image ..."
+p7zip "${GPI_IMAGE}"
+
+# generate checksums
+echo -n "Generating checksum files ... "
+rm -rf images/*.sign images/MD5SUMS images/SHA1SUMS images/SHA256SUMS
+md5deep -b images/*.img* > images/MD5SUMS
+sha1deep -b images/*.img* > images/SHA1SUMS
+sha256deep -b images/*.img* > images/SHA256SUMS
+echo "ok"
+
+# sign checksums if .gnupg files are present
+if [ -d ~/.gnupg ]; then
+	echo -n "Signing checksum files ... "
+	if [ -f ~/.gnupg/passphrase ]; then
+		gpg --batch --passphrase-file ~/.gnupg/passphrase -sat images/MD5SUMS --output images/MD5SUMS.sign
+		gpg --batch --passphrase-file ~/.gnupg/passphrase -sat images/SHA1SUMS --output images/SHA1SUMS.sign
+		gpg --batch --passphrase-file ~/.gnupg/passphrase -sat images/SHA256SUMS --output images/SHA256SUMS.sign
+	else
+		gpg --batch -sat images/MD5SUMS --output images/MD5SUMS.sign
+		gpg --batch -sat images/SHA1SUMS --output images/SHA1SUMS.sign
+		gpg --batch -sat images/SHA256SUMS --output images/SHA256SUMS.sign
+	fi
+	echo "ok"
+fi
+
 cd - 2>&1>/dev/null
