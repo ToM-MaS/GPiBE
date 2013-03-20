@@ -44,8 +44,8 @@ if [ "${IMAGE}" != "-u" ]; then
 		sudo cp -f /usr/bin/qemu-arm-static "${MOUNTPOINT}/usr/bin/qemu-arm-static"
 		[ -e "${MOUNTPOINT}/etc/ld.so.preload" ] && sudo sed -i 's/^/#/' "${MOUNTPOINT}/etc/ld.so.preload"
 		sudo sh -c "echo \"export LC_ALL=C\" > \"${MOUNTPOINT}/etc/environment\""
-		sudo sh -c "echo \"export LC_ALL=C\" > "${MOUNTPOINT}/root/.bashrc""
-		sudo sh -c "echo \"export PS1=\"\(GPiBE\) \$PS1\"\" >> \"${MOUNTPOINT}/root/.bashrc\""
+		sudo sh -c "echo \"export LC_ALL=C\" >> "${MOUNTPOINT}/root/.bashrc""
+		sudo sh -c "echo 'export PS1=\"(GPiBE) \$PS1\"' >> \"${MOUNTPOINT}/root/.bashrc\""
 		[ ! -e "${MOUNTPOINT}/etc/mtab" ] && sudo ln -s /proc/mounts "${MOUNTPOINT}/etc/mtab"
 	else
 		echo -e "\nERROR: Image file '${IMAGE}' not found."
