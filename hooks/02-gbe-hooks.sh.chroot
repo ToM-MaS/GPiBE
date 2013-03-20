@@ -7,7 +7,7 @@
 # See LICENSE.GPiBE file for details.
 #
 
-[ -e /etc/environment ] && . /etc/environment
+[ -e /etc/gemeinschaft/system.conf ] && source /etc/gemeinschaft/system.conf || echo "FATAL ERROR: Local configuration file in /etc/gemeinschaft/system.conf missing"
 
 echo -e "GPiBE: Now running hook files from GBE upstream ..."
 for FILE in /be/upstream/GBE/config.v3/hooks/*.sh.chroot; do

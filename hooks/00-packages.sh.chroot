@@ -7,7 +7,7 @@
 # See LICENSE.GPiBE file for details.
 #
 
-[ -e /etc/environment ] && . /etc/environment
+[ -e /etc/gemeinschaft/system.conf ] && source /etc/gemeinschaft/system.conf || echo "FATAL ERROR: Local configuration file in /etc/gemeinschaft/system.conf missing"
 
 # Disable init-scripts
 echo '#!/bin/sh' > /usr/sbin/policy-rc.d
