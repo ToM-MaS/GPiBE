@@ -2,11 +2,16 @@
 
 . GPiBE.conf
 
-MNT="tools/mnt-pi-img.sh"
-GPI_IMAGE_TMPL="cache/gs5-rpi-tmpl.img"
-GPI_IMAGE="images/gs5-rpi.img"
-
 cd $(dirname $(readlink -f $0))
+
+[ -e  GPiBE_branch ] && GPI_BRANCH="`cat GPiBE_branch`" || GPI_BRANCH="master"
+
+MNT="tools/mnt-pi-img.sh"
+BUILDNAME="`date +%y%m%d%H%M`rpi"
+[[ "${GPI_BRANCH}" != "master" ]] && BUILDNAME="${BUILDNAME}-${GPI_BRANCH}"
+FILENAME="${GDFDL_FILE_PREFIX}_${BUILDNAME}"
+GPI_IMAGE="images/${FILENAME}.img"
+GPI_IMAGE_TMPL="cache/gs5-rpi-tmpl.img"
 
 # Create image clone
 if [ ! -e "${GPI_IMAGE_TMPL}" ]; then
@@ -41,7 +46,8 @@ fi
 
 # Compatibility with GBE
 sudo ln -s be/GPiBE.conf chroot/gdfdl.conf
-sudo sh -c "echo \"rpi\" > chroot/etc/gdfdl_build"
+sudo sh -c "echo \"${BUILDNAME}\" > chroot/etc/gdfdl_build"
+[ "${GIT_BRANCH}" != "" ] && sudo sh -c "echo \"${GIT_BRANCH}\" > chroot/etc/gemeinschaft_branch" || sudo sh -c "echo master > chroot/etc/gemeinschaft_branch"
 
 echo -e "GPiBE: Running hooks ..."
 for FILE in `find hooks -name "*.sh.chroot" | sort`; do

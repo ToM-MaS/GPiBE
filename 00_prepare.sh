@@ -67,4 +67,7 @@ if [ ! -e "${GPI_IMAGE}" ]; then
 	${MNT} -u chroot
 fi
 
+# write branch information to local file
+[ x"${GIT_BRANCH}" != x"" ] && echo "${GIT_BRANCH}" > GPiBE_branch
+
 cd - 2>&1>/dev/null
