@@ -38,12 +38,12 @@ fi
 if [ -d upstream/GSE ]; then
 	echo -e "GPiBE: GSE upstream found, copy to image ..."
 	sudo mkdir -p chroot/opt/GSE
-	sudo cp -rfv upstream/GSE chroot/opt/GSE
+	sudo cp -rfv upstream/GSE chroot/opt
 fi
 if [ -d upstream/GS5 ]; then
 	echo -e "GPiBE: GS5 upstream found, copy to image ..."
 	sudo mkdir -p chroot/opt/GS5
-	sudo cp -rfv upstream/GS5 chroot/opt/GS5
+	sudo cp -rfv upstream/GS5 chroot/opt
 fi
 
 # Compatibility with GBE
