@@ -1,0 +1,55 @@
+#!/bin/bash
+
+### BEGIN INIT INFO
+# Provides:          gemeinschaft-init-rpi
+# Required-Start:    $local_fs $network
+# Required-Stop:
+# X-Start-Before:    gemeinschaft-init
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Do initial task for first startup of Gemeinschaft in RasPi
+# Description:       
+### END INIT INFO
+
+# General settings
+[ -f /gdfdl.conf ] && source /gdfdl.conf
+[ -f /gdfdl-custom.conf ] && source /gdfdl-custom.conf
+[ -f /etc/gemeinschaft/system.conf ] && source /etc/gemeinschaft/system.conf || echo "FATAL ERROR: Local configuration file in /etc/gemeinschaft/system.conf missing"
+set -e
+
+# Enforce root rights
+#
+if [[ ${EUID} -ne 0 ]];
+	then
+	echo "ERROR: `basename $0` needs to be run as root. Aborting ..."
+	exit 1
+fi
+
+case "$1" in
+	start)
+		# Post-Installation setup for Gemeinschaft 5
+		#
+
+		echo -e "** Finalizing RaspberryPi setup ...\n"
+		export DEBIAN_FRONTEND=noninteractive
+		apt-get update 2>&1
+		apt-get -y --force-yes upgrade 2>&1
+		apt-get clean 2>&1
+
+		apt-get --yes install mysql-server-5.5 mysql-server mysql-client-5.5 mysql-client mysql-common
+		apt-get --yes install postfix mailutils
+
+		# self destruction
+		#
+		rm -rf /gdfdl-custom.conf /gdfdl.conf
+		rm -rf /etc/init.d/gemeinschaft-init-raspi; update-rc.d gemeinschaft-init-raspi remove
+		;;
+
+	stop)
+		# nothing to do
+		;;
+	*)
+		echo "Undefined usage."
+		exit 3
+		;;
+esac
