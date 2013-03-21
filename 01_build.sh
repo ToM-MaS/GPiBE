@@ -57,6 +57,9 @@ for FILE in `find hooks -name "*.sh.chroot" | sort`; do
 	[ "$?" != "0" ] && break
 done
 
+# cleanup
+sudo rm -fv chroot/usr/lib/qemu-arm-static
+
 # umount
 echo -e "GPiBE: Unmounting image ..."
 sudo ${MNT} -u chroot

@@ -17,3 +17,7 @@ echo core_freq=250 >> /boot/config.txt
 echo sdram_freq=450 >> /boot/config.txt
 echo over_voltage=6 >> /boot/config.txt
 echo force_turbo=0 >> /boot/config.txt
+
+# Copy skel files to root homedir
+cp -fv /etc/skel/.bash* ~
+cp -fv /etc/skel/.profile ~
