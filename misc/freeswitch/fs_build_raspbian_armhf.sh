@@ -1,4 +1,4 @@
-#!/bin/bash -ex
+#!/bin/bash -x
 #
 
 # settings
@@ -36,7 +36,7 @@ dch -b -m -v "$ver" --force-distribution -D "$suite" "Custom build."
 cd -
 
 
-echo "export http_proxy="$http_proxy"; cd /mnt/freeswitch; dpkg-buildpackage -b -us -uc -Zxz -z9; chmod 777 /mnt; chmod o+w ../*" > build.sh
+echo "export http_proxy="$http_proxy"; cd /mnt/freeswitch; dpkg-buildpackage -b -us -uc -Zxz -z9 -k09E60DF5; chmod 777 /mnt; chmod o+w ../*" > build.sh
 
 # mount
 [[ "x`cat /proc/mounts | grep ${BE_ROOT}/dev/pts`" == "x" ]] && sudo mount -o bind /dev/pts "${BE_ROOT}/dev/pts"

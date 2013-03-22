@@ -1,0 +1,24 @@
+## postfix preseeding
+# General type of configuration? Default:Internet Site
+# Choices: No configuration, Internet Site, Internet with smarthost,
+#   Satellite system, Local only
+postfix postfix/main_mailer_type        select  Internet Site
+# Where should mail for root go, Default:if not set, will spool locally
+#postfix postfix/root_address    string foo@bar.com
+# SMTP relay host? (blank for none) Default:(none)
+#postfix postfix/relayhost       string smtp.example.com 
+# Force synchronous updates on mail queue?  Default:false
+#postfix postfix/chattr  boolean true
+# Local networks? Default:"127.0.0.0/8" 
+# blank uses the postfix default (which is based on the connected subnets)
+postfix postfix/mynetworks      string  127.0.0.0/8
+# Use procmail for local delivery? Defaults to true if /usr/bin/procmail exists
+#postfix postfix/procmail        boolean false
+# Mailbox size limit Default:0 (unlimited), upstream default is 51200000
+postfix postfix/mailbox_limit   string  51200000
+# Local address extension character? Default:+
+#postfix postfix/recipient_delim string  -
+# Internet protocols to use? Default is based on checking if
+#  /proc/sys/net/ipv{4,6} exist
+# Choices: all, ipv6, ipv4
+postfix postfix/protocols       select  ipv4
