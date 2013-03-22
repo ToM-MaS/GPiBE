@@ -66,7 +66,7 @@ sudo ${MNT} -u chroot
 
 # Compress image
 echo -e "GPiBE: Compressing image ..."
-p7zip "${GPI_IMAGE}"
+(cd images; p7zip "${GPI_IMAGE#*/}")
 
 # generate checksums
 echo -n "Generating checksum files ... "

@@ -14,7 +14,7 @@
 # General settings
 [ -f /gdfdl.conf ] && source /gdfdl.conf
 [ -f /gdfdl-custom.conf ] && source /gdfdl-custom.conf
-[ -f /etc/gemeinschaft/system.conf ] && source /etc/gemeinschaft/system.conf || echo "FATAL ERROR: Local configuration file in /etc/gemeinschaft/system.conf missing"
+[ -f /etc/gemeinschaft/system.conf ] && source /etc/gemeinschaft/system.conf
 set -e
 
 # Enforce root rights
@@ -41,7 +41,6 @@ case "$1" in
 
 		# self destruction
 		#
-		rm -rf /gdfdl-custom.conf /gdfdl.conf
 		rm -rf /etc/init.d/gemeinschaft-init-raspi; update-rc.d gemeinschaft-init-raspi remove
 		;;
 
