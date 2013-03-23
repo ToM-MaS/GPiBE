@@ -13,7 +13,7 @@
 apt-get clean 2>&1
 
 # let GPU use a minimum of RAM
-echo gpu_mem=16 >> /boot/config.txt
+echo gpu_mem=8 >> /boot/config.txt
 
 # Set overclocking to "high"
 echo core_freq=250 >> /boot/config.txt
@@ -36,3 +36,10 @@ sed -i 's/^127\.0\.1\.1.*/127\.0\.1\.1\tgs5rpi.local gs5rpi/' /etc/hosts
 useradd gsmaster -N -m -d /home/gsmaster -s /bin/bash -c "Gemeinschaft System Administrator" -g gemeinschaft
 usermod -a -G sudo gsmaster
 echo -e "raspberry\nraspberry" | (passwd gsmaster)
+
+# always use production state for performance reasons
+sed -i 's/^GSE_ENV=.*/GSE_ENV=\"production\"/' /etc/gemeinschaft/system.conf
+sed -i 's/^RAILS_ENV=.*/RAILS_ENV=\"production\"/' /etc/gemeinschaft/system.conf
+set +e
+"${GSE_DIR_NORMALIZED}/bin/gs-change-state.sh"
+set -e
