@@ -41,7 +41,7 @@ case "$1" in
 
 		# self destruction
 		#
-		rm -rf /etc/init.d/gemeinschaft-init-raspi; update-rc.d gemeinschaft-init-raspi remove
+		rm -rf /etc/init.d/gemeinschaft-init-rpi; update-rc.d gemeinschaft-init-rpi remove
 		;;
 
 	stop)
