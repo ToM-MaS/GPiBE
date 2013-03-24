@@ -2,9 +2,13 @@
 
 . GPiBE.conf
 
+set -e
+
 cd $(dirname $(readlink -f $0))
 
 [ -e  GPiBE_branch ] && GPI_BRANCH="`cat GPiBE_branch`" || GPI_BRANCH="master"
+
+FAILED=false
 
 MNT="tools/mnt-pi-img.sh"
 BUILDNAME="`date +%y%m%d%H%M`rpi"
@@ -54,7 +58,11 @@ sudo sh -c "echo \"${BUILDNAME}\" > chroot/etc/gdfdl_build"
 echo -e "GPiBE: Running hooks ..."
 for FILE in `find hooks -name "*.sh.chroot" | sort`; do
 	sudo chroot chroot /be/${FILE}
-	[ "$?" != "0" ] && break
+	if [ "$?" != "0" ]; then
+		echo "$FILE aborted with error, aborting execution..."
+		FAILED=true
+		break
+	fi
 done
 
 # cleanup
@@ -64,31 +72,35 @@ sudo rm -fv chroot/usr/lib/qemu-arm-static
 echo -e "GPiBE: Unmounting image ..."
 sudo ${MNT} -u chroot
 
-# Compress image
-echo -e "GPiBE: Compressing image ..."
-(cd images; p7zip "${GPI_IMAGE#*/}")
+if [ "${FAILED}" == "false" ]; then
+	# Compress image
+	echo -e "GPiBE: Compressing image ..."
+	(cd images; p7zip "${GPI_IMAGE#*/}")
 
-# generate checksums
-echo -n "Generating checksum files ... "
-rm -rf images/*.sign images/MD5SUMS images/SHA1SUMS images/SHA256SUMS
-md5deep -b images/*.img* > images/MD5SUMS
-sha1deep -b images/*.img* > images/SHA1SUMS
-sha256deep -b images/*.img* > images/SHA256SUMS
-echo "ok"
-
-# sign checksums if .gnupg files are present
-if [ -d ~/.gnupg ]; then
-	echo -n "Signing checksum files ... "
-	if [ -f ~/.gnupg/passphrase ]; then
-		gpg --batch --passphrase-file ~/.gnupg/passphrase -sat images/MD5SUMS --output images/MD5SUMS.sign
-		gpg --batch --passphrase-file ~/.gnupg/passphrase -sat images/SHA1SUMS --output images/SHA1SUMS.sign
-		gpg --batch --passphrase-file ~/.gnupg/passphrase -sat images/SHA256SUMS --output images/SHA256SUMS.sign
-	else
-		gpg --batch -sat images/MD5SUMS --output images/MD5SUMS.sign
-		gpg --batch -sat images/SHA1SUMS --output images/SHA1SUMS.sign
-		gpg --batch -sat images/SHA256SUMS --output images/SHA256SUMS.sign
-	fi
+	# generate checksums
+	echo -n "Generating checksum files ... "
+	rm -rf images/*.sign images/MD5SUMS images/SHA1SUMS images/SHA256SUMS
+	md5deep -b images/*.img* > images/MD5SUMS
+	sha1deep -b images/*.img* > images/SHA1SUMS
+	sha256deep -b images/*.img* > images/SHA256SUMS
 	echo "ok"
+
+	# sign checksums if .gnupg files are present
+	if [ -d ~/.gnupg ]; then
+		echo -n "Signing checksum files ... "
+		if [ -f ~/.gnupg/passphrase ]; then
+			gpg --batch --passphrase-file ~/.gnupg/passphrase -sat images/MD5SUMS --output images/MD5SUMS.sign
+			gpg --batch --passphrase-file ~/.gnupg/passphrase -sat images/SHA1SUMS --output images/SHA1SUMS.sign
+			gpg --batch --passphrase-file ~/.gnupg/passphrase -sat images/SHA256SUMS --output images/SHA256SUMS.sign
+		else
+			gpg --batch -sat images/MD5SUMS --output images/MD5SUMS.sign
+			gpg --batch -sat images/SHA1SUMS --output images/SHA1SUMS.sign
+			gpg --batch -sat images/SHA256SUMS --output images/SHA256SUMS.sign
+		fi
+		echo "ok"
+	fi
+else
+	exit 1
 fi
 
 cd - 2>&1>/dev/null
