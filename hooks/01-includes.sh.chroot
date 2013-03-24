@@ -9,6 +9,8 @@
 
 [ -e /etc/gemeinschaft/system.conf ] && source /etc/gemeinschaft/system.conf || echo "FATAL ERROR: Local configuration file in /etc/gemeinschaft/system.conf missing"
 
+set -e
+
 # Copy includes.chroot from GBE Debian Live repo
 echo -e "GPiBE: Copy includes.chroot from GBE upstream ..."
 cp -rfv /be/upstream/GBE/config.v3/includes.chroot/* /

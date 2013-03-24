@@ -2,6 +2,8 @@
 
 . GPiBE.conf
 
+set -e
+
 IMAGE_ARCHIVE_FILE="cache/${RPI_IMAGE_SRC_URL##*/}"
 IMAGE_FILE="${IMAGE_ARCHIVE_FILE%%.*}.img"
 MNT="tools/mnt-pi-img.sh"

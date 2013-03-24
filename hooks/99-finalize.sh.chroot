@@ -9,6 +9,8 @@
 
 [ -e /etc/gemeinschaft/system.conf ] && source /etc/gemeinschaft/system.conf || echo "FATAL ERROR: Local configuration file in /etc/gemeinschaft/system.conf missing"
 
+set -e
+
 # Clear local package cache
 apt-get clean 2>&1
 
