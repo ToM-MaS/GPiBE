@@ -5,7 +5,7 @@
 # Required-Stop:
 # Default-Start: 2 3 4 5 S
 # Default-Stop:
-# Short-Description: Resize the root filesystem to fill partition
+# Short-Description: Resize the root filesystem
 # Description:
 ### END INIT INFO
 
@@ -18,27 +18,9 @@
 case "$1" in
   start)
 
-  log_daemon_msg "Expanding data partition to use full SD card capacity"
+    log_daemon_msg "Expanding root filesystem"
 
-  # Get the starting offset of the root partition
-  PART_START=$(parted /dev/mmcblk0 -ms unit s p | grep "^2" | cut -f 2 -d:)
-  [ "$PART_START" ] || return 1
-  # Return value will likely be error for fdisk as it fails to reload the 
-  # partition table because the root fs is mounted
-  fdisk /dev/mmcblk0 <<EOF
-p
-d
-2
-n
-p
-2
-$PART_START
-
-p
-w
-EOF
-
-    partprobe /dev/mmcblk0 && resize2fs /dev/mmcblk0p2 &&
+    resize2fs /dev/mmcblk0p2 &&
     rm /etc/init.d/resize2fs_once &&
     update-rc.d resize2fs_once remove &&
     log_end_msg $?
