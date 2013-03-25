@@ -3,6 +3,7 @@
 # Provides:          resize2fs_once
 # Required-Start:
 # Required-Stop:
+# X-Start-Before:    gemeinschaft-runtime-init
 # Default-Start: 2 3 4 5 S
 # Default-Stop:
 # Short-Description: Resize the root filesystem
