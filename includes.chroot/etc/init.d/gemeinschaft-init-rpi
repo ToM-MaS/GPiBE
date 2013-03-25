@@ -2,7 +2,7 @@
 
 ### BEGIN INIT INFO
 # Provides:          gemeinschaft-init-rpi
-# Required-Start:    $local_fs $network
+# Required-Start:    $local_fs $network resize2fs_once
 # Required-Stop:
 # X-Start-Before:    gemeinschaft-init
 # Default-Start:     2 3 4 5
