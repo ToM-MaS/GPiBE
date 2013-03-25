@@ -35,10 +35,18 @@ update-rc.d -f gemeinschaft-init-rpi defaults 2>&1
 echo gs5rpi > /etc/hostname
 sed -i 's/^127\.0\.1\.1.*/127\.0\.1\.1\tgs5rpi.local gs5rpi/' /etc/hosts
 
-# gsmaster
-useradd gsmaster -N -m -d /home/gsmaster -s /bin/bash -c "Gemeinschaft System Administrator" -g gemeinschaft
-usermod -a -G sudo gsmaster
-echo -e "raspberry\nraspberry" | (passwd gsmaster)
+# rename user pi to gsmaster
+sed -i 's/^pi/gsmaster/' /etc/passwd
+sed -i 's/^pi/gsmaster/' /etc/passwd-
+sed -i 's/\/home\/pi/\/home\/gsmaster/' /etc/passwd
+sed -i 's/\/home\/pi/\/home\/gsmaster/' /etc/passwd-
+sed -i 's/^pi/gsmaster/' /etc/shadow
+sed -i 's/^pi/gsmaster/' /etc/shadow-
+sed -i 's/pi/gsmaster/' /etc/group
+sed -i 's/pi/gsmaster/' /etc/group-
+sed -i 's/pi/gsmaster/' /etc/gshadow
+sed -i 's/pi/gsmaster/' /etc/gshadow-
+usermod -c "Gemeinschaft System Administrator" -g gemeinschaft gsmaster
 
 # always use production state for performance reasons
 sed -i 's/^GSE_ENV=.*/GSE_ENV=\"production\"/' /etc/gemeinschaft/system.conf
