@@ -29,9 +29,10 @@ echo "89.221.14.194 repo.amooma.de" >> /etc/hosts
 # Disable interactive frontend
 export DEBIAN_FRONTEND=noninteractive
 
-apt-get update 2>&1
-apt-get -y --force-yes upgrade 2>&1
-apt-get clean 2>&1
+apt-get -y update 2>&1
+apt-get -y dist-upgrade 2>&1
+apt-get -y autoremove 2>&1
+apt-get -y autoclean 2>&1
 
 # load preseeds
 #for FILE in /be/upstream/GBE/config.v3/preseed/*.cfg.chroot; do

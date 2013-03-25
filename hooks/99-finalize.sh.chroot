@@ -27,7 +27,11 @@ echo force_turbo=0 >> /boot/config.txt
 cp -fv /etc/skel/.bash* ~
 cp -fv /etc/skel/.profile ~
 
+# Dropbear: prevent password logins for root
+sed -i 's/DROPBEAR_EXTRA_ARGS=/DROPBEAR_EXTRA_ARGS="-g"/g' /etc/default/dropbear
+
 # bootup
+sed -i 's/NO_START=1/NO_START=0/g' /etc/default/dropbear
 update-rc.d -f resize2fs_once defaults 2>&1
 update-rc.d -f gemeinschaft-init-rpi defaults 2>&1
 

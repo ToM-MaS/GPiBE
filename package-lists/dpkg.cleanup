@@ -216,6 +216,7 @@ netsurf-gtk
 obconf
 omxplayer
 openbox
+openssh-server
 pciutils
 pcmanfm
 policykit-1
@@ -231,6 +232,7 @@ python3.2
 python3.2-minimal
 scratch
 shared-mime-info
+ssh
 squeak-vm
 tasksel
 tcl8.5

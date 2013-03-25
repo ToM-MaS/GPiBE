@@ -20,7 +20,7 @@ libcap2-bin libpcap-dev unzip
 sysstat htop iftop slurm iptraf iotop dstat lsof mtr-tiny tcpdump ngrep ssldump pciutils usbutils  lshw hwinfo tree screen dtach tmux byobu multitail powertop
 
 # services
-openssh-server dnsmasq ntp memcached snmpd snmp snmp-mibs-downloader
+dropbear dnsmasq ntp memcached snmpd snmp snmp-mibs-downloader
 
 # security
 shorewall shorewall6 iptables apg haveged sshguard
