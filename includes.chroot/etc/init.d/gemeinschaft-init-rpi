@@ -2,7 +2,7 @@
 
 ### BEGIN INIT INFO
 # Provides:          gemeinschaft-init-rpi
-# Required-Start:    $local_fs $network resize2fs_once
+# Required-Start:    $local_fs $network
 # Required-Stop:
 # X-Start-Before:    gemeinschaft-init
 # Default-Start:     2 3 4 5
@@ -32,12 +32,12 @@ case "$1" in
 
 		echo -e "** Finalizing RaspberryPi setup ...\n"
 		
-		# Install moh
-		[[ ! `gs-addon status fs-sounds-music-8khz` ]] && gs-addon install fs-sounds-music-8khz
+#		# Install moh
+#		[[ ! `gs-addon status fs-sounds-music-8khz` ]] && gs-addon install fs-sounds-music-8khz
 
-		# Install voice prompts
-		[[ ! `gs-addon status fs-sounds-en-callie-8khz` ]] && gs-addon install fs-sounds-en-callie-8khz
-		[[ ! `gs-addon status fs-sounds-de-tts-google-8khz` ]] && gs-addon install fs-sounds-de-tts-google-8khz
+#		# Install voice prompts
+#		[[ ! `gs-addon status fs-sounds-en-callie-8khz` ]] && gs-addon install fs-sounds-en-callie-8khz
+#		[[ ! `gs-addon status fs-sounds-de-tts-google-8khz` ]] && gs-addon install fs-sounds-de-tts-google-8khz
 		
 		# Install missing packages
 		export DEBIAN_FRONTEND=noninteractive
