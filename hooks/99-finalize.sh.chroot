@@ -28,6 +28,7 @@ cp -fv /etc/skel/.bash* ~
 cp -fv /etc/skel/.profile ~
 
 # bootup
+update-rc.d -f resize2fs_once defaults 2>&1
 update-rc.d -f gemeinschaft-init-rpi defaults 2>&1
 
 # hostname
