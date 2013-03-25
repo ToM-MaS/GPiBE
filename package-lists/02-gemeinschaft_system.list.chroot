@@ -7,7 +7,7 @@
 #
 
 # system software
-isc-dhcp-client isc-dhcp-common locales debconf-utils syslog-ng console-common console-setup console-data user-setup sudo
+isc-dhcp-client isc-dhcp-common locales debconf-utils syslog-ng console-common console-setup console-data user-setup sudo lsb-release
 
 # basic software
 vim keyboard-configuration man
