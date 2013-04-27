@@ -70,8 +70,8 @@ if [ ! -e "${GPI_IMAGE}" ]; then
 
 	# resize to 3.4GB
 	truncate --size $((3400*1024*1024)) ${GPI_IMAGE}
-	PART_START=$(parted ${GPI_IMAGE} -ms unit s p | grep "^2" | cut -f 2 -d:)
-	[ "$PART_START" ] || return 1
+	PART_START=$(/sbin/parted ${GPI_IMAGE} -ms unit s p | grep "^2" | cut -f 2 -d:)
+	[ "$PART_START" ] || exit 1
 	fdisk ${GPI_IMAGE} <<EOF
 p
 d
