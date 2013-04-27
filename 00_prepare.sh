@@ -67,6 +67,33 @@ if [ ! -e "${GPI_IMAGE}" ]; then
 	# umount
 	echo -e "GPiBE: Unmounting image ..."
 	sudo ${MNT} -u chroot
+
+	# resize to 3.4GB
+	truncate --size $((3400*1024*1024)) ${GPI_IMAGE}
+	PART_START=$(/sbin/parted ${GPI_IMAGE} -ms unit s p | grep "^2" | cut -f 2 -d:)
+	[ "$PART_START" ] || exit 1
+	/sbin/fdisk ${GPI_IMAGE} <<EOF
+p
+d
+2
+n
+p
+2
+$PART_START
+
+p
+w
+EOF
+
+	OFFSET_ROOT=`/sbin/sfdisk -uS -l "${GPI_IMAGE}" 2>/dev/null | grep img2 | awk '{print $2}'`
+	OFFSET_ROOT=$((512*${OFFSET_ROOT}))
+	LOOP_DEV="`sudo /sbin/losetup -f --show -o ${OFFSET_ROOT} ${GPI_IMAGE}`"
+
+	sudo /sbin/e2fsck -f -y ${LOOP_DEV}
+	sudo /sbin/resize2fs ${LOOP_DEV}
+	sync
+	sleep 3
+	sudo /sbin/losetup -d ${LOOP_DEV}
 fi
 
 # write branch information to local file
