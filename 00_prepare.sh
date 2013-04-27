@@ -72,7 +72,7 @@ if [ ! -e "${GPI_IMAGE}" ]; then
 	truncate --size $((3400*1024*1024)) ${GPI_IMAGE}
 	PART_START=$(/sbin/parted ${GPI_IMAGE} -ms unit s p | grep "^2" | cut -f 2 -d:)
 	[ "$PART_START" ] || exit 1
-	fdisk ${GPI_IMAGE} <<EOF
+	/sbin/fdisk ${GPI_IMAGE} <<EOF
 p
 d
 2
@@ -85,14 +85,15 @@ p
 w
 EOF
 
-	OFFSET_ROOT=`sfdisk -uS -l "${GPI_IMAGE}" 2>/dev/null | grep img2 | awk '{print $2}'`
-	LOOP_DEV=$(losetup -f --show -o $((512*${OFFSET_ROOT})) ${GPI_IMAGE})
+	OFFSET_ROOT=`/sbin/sfdisk -uS -l "${GPI_IMAGE}" 2>/dev/null | grep img2 | awk '{print $2}'`
+	OFFSET_ROOT=$((512*${OFFSET_ROOT}))
+	LOOP_DEV="`sudo /sbin/losetup -f --show -o ${OFFSET_ROOT} ${GPI_IMAGE}`"
 
-	e2fsck -f -y ${LOOP_DEV}
-	resize2fs ${LOOP_DEV}
+	sudo /sbin/e2fsck -f -y ${LOOP_DEV}
+	sudo /sbin/resize2fs ${LOOP_DEV}
 	sync
 	sleep 3
-	losetup -d ${LOOP_DEV}
+	sudo /sbin/losetup -d ${LOOP_DEV}
 fi
 
 # write branch information to local file
