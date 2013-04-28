@@ -32,13 +32,6 @@ case "$1" in
 
 		echo -e "** Finalizing RaspberryPi setup ...\n"
 		
-#		# Install moh
-#		[[ ! `gs-addon status fs-sounds-music-8khz` ]] && gs-addon install fs-sounds-music-8khz
-
-#		# Install voice prompts
-#		[[ ! `gs-addon status fs-sounds-en-callie-8khz` ]] && gs-addon install fs-sounds-en-callie-8khz
-#		[[ ! `gs-addon status fs-sounds-de-tts-google-8khz` ]] && gs-addon install fs-sounds-de-tts-google-8khz
-		
 		# Install missing packages
 		export DEBIAN_FRONTEND=noninteractive
 		apt-get update 2>&1
