@@ -53,14 +53,14 @@ if [ ! -e "${GPI_IMAGE}" ]; then
 	sudo sh -c "echo 'exit 101' >> chroot/usr/sbin/policy-rc.d"
 	sudo chmod 755 chroot/usr/sbin/policy-rc.d
 
-	# Shrink image
+	# Cleanup image
 	echo -e "GPiBE: Removing abundant packages to shrink image ..."
 	export DEBIAN_FRONTEND=noninteractive
-	sudo chroot chroot apt-get --yes purge $(cat package-lists/dpkg.cleanup)
+	sudo chroot chroot apt-get -y -q --force-yes purge $(cat package-lists/dpkg.cleanup)
 	sudo chroot chroot rm -rf /usr/lib/xorg/modules/linux /usr/lib/xorg/modules/extensions /usr/lib/xorg/modules /usr/lib/xorg /etc/polkit-1 /etc/skel/pistore.desktop
-	sudo chroot chroot apt-get --yes autoremove
-	sudo chroot chroot apt-get --yes autoclean
-	sudo chroot chroot apt-get --yes clean
+	sudo chroot chroot apt-get -y -q --force-yes autoremove
+	sudo chroot chroot apt-get -y -q --force-yes autoclean
+	sudo chroot chroot apt-get -y -q --force-yes clean
 
 	sudo rm -f chroot/usr/sbin/policy-rc.d
 
@@ -68,7 +68,7 @@ if [ ! -e "${GPI_IMAGE}" ]; then
 	echo -e "GPiBE: Unmounting image ..."
 	sudo ${MNT} -u chroot
 
-	# resize to 3.4GB
+	# Resize image to 3.4GB
 	truncate --size $((3400*1024*1024)) ${GPI_IMAGE}
 	PART_START=$(/sbin/parted ${GPI_IMAGE} -ms unit s p | grep "^2" | cut -f 2 -d:)
 	[ "$PART_START" ] || exit 1
