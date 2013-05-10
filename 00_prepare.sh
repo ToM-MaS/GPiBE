@@ -18,7 +18,14 @@ cd $(dirname $(readlink -f $0))
 if [[ ! -e "${IMAGE_ARCHIVE_FILE}" && ! -e "${IMAGE_FILE}" && ! -e "${GPI_IMAGE}" ]]; then
 	echo -e "GPiBE: Downloading Raspbian base image ..."
 	wget "${RPI_IMAGE_SRC_URL}" -O "${IMAGE_ARCHIVE_FILE}"
-	rm -f "${GPI_IMAGE}"
+
+  SHA1SUM="`sha1sum ${RPI_IMAGE_SHA1} | cut -d " " -f1`"
+  if [ x"${RPI_IMAGE_SHA1}" == x"${SHA1SUM}" ]  
+	  rm -f "${GPI_IMAGE}"
+  else
+    echo "ERROR: SHA1 checksum error (${SHA1SUM} != ${RPI_IMAGE_SHA1})"
+    exit 1
+  fi
 fi
 if [ ! -e "${IMAGE_FILE}" ]; then
 	unzip "${IMAGE_ARCHIVE_FILE}" -d "${IMAGE_ARCHIVE_FILE%%/*}"
