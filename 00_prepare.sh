@@ -62,13 +62,17 @@ if [ ! -e "${GPI_IMAGE}" ]; then
 
 	# Cleanup image
 	echo -e "GPiBE: Removing abundant packages to shrink image ..."
-	export DEBIAN_FRONTEND=noninteractive
-	sudo chroot chroot apt-get -y -q --force-yes purge $(cat package-lists/dpkg.cleanup)
+	sudo chroot chroot DEBIAN_FRONTEND=noninteractive apt-get -y -q --force-yes purge $(cat package-lists/dpkg.cleanup)
 	sudo chroot chroot rm -rf /usr/lib/xorg/modules/linux /usr/lib/xorg/modules/extensions /usr/lib/xorg/modules /usr/lib/xorg /etc/polkit-1 /etc/skel/pistore.desktop
-	sudo chroot chroot apt-get -y -q --force-yes autoremove
-	sudo chroot chroot apt-get -y -q --force-yes autoclean
-	sudo chroot chroot apt-get -y -q --force-yes clean
+	sudo chroot chroot DEBIAN_FRONTEND=noninteractive apt-get -y -q --force-yes autoremove
+	sudo chroot chroot DEBIAN_FRONTEND=noninteractive apt-get -y -q --force-yes autoclean
+	sudo chroot chroot DEBIAN_FRONTEND=noninteractive apt-get -y -q --force-yes clean
 
+	# Update image
+	sudo chroot chroot DEBIAN_FRONTEND=noninteractive apt-get -y -q --force-yes update
+	sudo chroot chroot DEBIAN_FRONTEND=noninteractive apt-get -y -q --force-yes dist-upgrade
+
+	# Remove init-script policy
 	sudo rm -f chroot/usr/sbin/policy-rc.d
 
 	# umount
