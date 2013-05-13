@@ -20,7 +20,7 @@ if [[ ! -e "${IMAGE_ARCHIVE_FILE}" && ! -e "${IMAGE_FILE}" && ! -e "${GPI_IMAGE}
 	wget "${RPI_IMAGE_SRC_URL}" -O "${IMAGE_ARCHIVE_FILE}"
 
   SHA1SUM="`sha1sum ${RPI_IMAGE_SHA1} | cut -d " " -f1`"
-  if [ x"${RPI_IMAGE_SHA1}" == x"${SHA1SUM}" ]  
+  if [ x"${RPI_IMAGE_SHA1}" == x"${SHA1SUM}" ]; then
 	  rm -f "${GPI_IMAGE}"
   else
     echo "ERROR: SHA1 checksum error (${SHA1SUM} != ${RPI_IMAGE_SHA1})"
