@@ -1,0 +1,17 @@
+#!/bin/bash
+#
+# GemeinschaftPi
+# Pre configuration
+#
+# Copyright (c) 2013, Julian Pawlowski <jp@jps-networks.eu>
+# See LICENSE.GPiBE file for details.
+#
+
+[ -e /etc/gemeinschaft/system.conf ] && source /etc/gemeinschaft/system.conf || echo "FATAL ERROR: Local configuration file in /etc/gemeinschaft/system.conf missing"
+
+set -e
+
+# hostname
+echo gs5rpi > /etc/hostname
+echo gs5rpi.local > /etc/mailname
+sed -i 's/^127\.0\.1\.1.*/127\.0\.1\.1\tgs5rpi.local gs5rpi/' /etc/hosts

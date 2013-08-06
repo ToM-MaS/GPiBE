@@ -18,7 +18,14 @@ cd $(dirname $(readlink -f $0))
 if [[ ! -e "${IMAGE_ARCHIVE_FILE}" && ! -e "${IMAGE_FILE}" && ! -e "${GPI_IMAGE}" ]]; then
 	echo -e "GPiBE: Downloading Raspbian base image ..."
 	wget "${RPI_IMAGE_SRC_URL}" -O "${IMAGE_ARCHIVE_FILE}"
-	rm -f "${GPI_IMAGE}"
+
+  SHA1SUM="`sha1sum ${IMAGE_ARCHIVE_FILE} | cut -d " " -f1`"
+  if [ x"${RPI_IMAGE_SHA1}" == x"${SHA1SUM}" ]; then
+	  rm -f "${GPI_IMAGE}"
+  else
+    echo "ERROR: SHA1 checksum error (${SHA1SUM} != ${RPI_IMAGE_SHA1})"
+    exit 1
+  fi
 fi
 if [ ! -e "${IMAGE_FILE}" ]; then
 	unzip "${IMAGE_ARCHIVE_FILE}" -d "${IMAGE_ARCHIVE_FILE%%/*}"
@@ -53,22 +60,26 @@ if [ ! -e "${GPI_IMAGE}" ]; then
 	sudo sh -c "echo 'exit 101' >> chroot/usr/sbin/policy-rc.d"
 	sudo chmod 755 chroot/usr/sbin/policy-rc.d
 
-	# Shrink image
+	# Cleanup image
 	echo -e "GPiBE: Removing abundant packages to shrink image ..."
-	export DEBIAN_FRONTEND=noninteractive
-	sudo chroot chroot apt-get --yes purge $(cat package-lists/dpkg.cleanup)
+	sudo chroot chroot DEBIAN_FRONTEND=noninteractive apt-get -y -q --force-yes purge $(cat package-lists/dpkg.cleanup)
 	sudo chroot chroot rm -rf /usr/lib/xorg/modules/linux /usr/lib/xorg/modules/extensions /usr/lib/xorg/modules /usr/lib/xorg /etc/polkit-1 /etc/skel/pistore.desktop
-	sudo chroot chroot apt-get --yes autoremove
-	sudo chroot chroot apt-get --yes autoclean
-	sudo chroot chroot apt-get --yes clean
+	sudo chroot chroot DEBIAN_FRONTEND=noninteractive apt-get -y -q --force-yes autoremove
+	sudo chroot chroot DEBIAN_FRONTEND=noninteractive apt-get -y -q --force-yes autoclean
+	sudo chroot chroot DEBIAN_FRONTEND=noninteractive apt-get -y -q --force-yes clean
 
+	# Update image
+	sudo chroot chroot DEBIAN_FRONTEND=noninteractive apt-get -y -q --force-yes update
+	sudo chroot chroot DEBIAN_FRONTEND=noninteractive apt-get -y -q --force-yes dist-upgrade
+
+	# Remove init-script policy
 	sudo rm -f chroot/usr/sbin/policy-rc.d
 
 	# umount
 	echo -e "GPiBE: Unmounting image ..."
 	sudo ${MNT} -u chroot
 
-	# resize to 3.4GB
+	# Resize image to 3.4GB
 	truncate --size $((3400*1024*1024)) ${GPI_IMAGE}
 	PART_START=$(/sbin/parted ${GPI_IMAGE} -ms unit s p | grep "^2" | cut -f 2 -d:)
 	[ "$PART_START" ] || exit 1

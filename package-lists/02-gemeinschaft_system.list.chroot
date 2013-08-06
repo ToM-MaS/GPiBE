@@ -21,6 +21,8 @@ sysstat htop iftop slurm iptraf iotop dstat lsof mtr-tiny tcpdump ngrep ssldump 
 
 # services
 dropbear dnsmasq ntp memcached snmpd snmp snmp-mibs-downloader
+mysql-server-5.5 mysql-server mysql-client-5.5 mysql-client mysql-common
+#postfix mailutils
 
 # security
 shorewall shorewall6 iptables apg haveged sshguard

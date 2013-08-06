@@ -36,9 +36,8 @@ sed -i '/[2-6]:23:respawn:\/sbin\/getty 38400 tty[2-6]/s%^%#%g' /etc/inittab
 sed -i '/T0:23:respawn:\/sbin\/getty -L ttyAMA0 115200 vt100/s%^%#%g' /etc/inittab
 sed -i 's/deadline/noop/g' /boot/cmdline.txt
 
-export DEBIAN_FRONTEND=noninteractive
 echo "dash	dash/sh	boolean	true" | debconf-set-selections
-dpkg-reconfigure dash
+DEBIAN_FRONTEND=noninteractive dpkg-reconfigure dash
 
 # Disable IPv6
 echo "net.ipv6.conf.all.disable_ipv6=1" > /etc/sysctl.d/disableipv6.conf
@@ -56,10 +55,6 @@ sed -i 's/DROPBEAR_EXTRA_ARGS=/DROPBEAR_EXTRA_ARGS="-g"/g' /etc/default/dropbear
 sed -i 's/NO_START=1/NO_START=0/g' /etc/default/dropbear
 update-rc.d -f zram defaults 2>&1
 update-rc.d -f gemeinschaft-init-rpi defaults 2>&1
-
-# hostname
-echo gs5rpi > /etc/hostname
-sed -i 's/^127\.0\.1\.1.*/127\.0\.1\.1\tgs5rpi.local gs5rpi/' /etc/hosts
 
 # gsmaster
 useradd gsmaster -N -m -d /home/gsmaster -s /bin/bash -c "Gemeinschaft System Administrator" -g gemeinschaft

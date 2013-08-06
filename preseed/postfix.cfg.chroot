@@ -22,3 +22,4 @@ postfix postfix/mailbox_limit   string  51200000
 #  /proc/sys/net/ipv{4,6} exist
 # Choices: all, ipv6, ipv4
 postfix postfix/protocols       select  ipv4
+postfix postfix/mailname string gs5rpi.local
