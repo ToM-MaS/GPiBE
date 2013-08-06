@@ -23,9 +23,6 @@ for FILE in /be/archives/*.list.chroot; do
 done
 find /be/archives -type f -name "*.key.chroot" -exec apt-key add {} \;
 
-#FIXME
-echo "89.221.14.194 repo.amooma.de" >> /etc/hosts
-
 DEBIAN_FRONTEND=noninteractive apt-get -q -y --force-yes update 2>&1
 DEBIAN_FRONTEND=noninteractive apt-get -q -y --force-yes dist-upgrade 2>&1
 DEBIAN_FRONTEND=noninteractive apt-get -q -y --force-yes autoremove 2>&1
